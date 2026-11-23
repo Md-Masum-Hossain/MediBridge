@@ -1,24 +1,51 @@
+import { Plus_Jakarta_Sans, Hind_Siliguri } from 'next/font/google';
 import './globals.css';
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const hindSiliguri = Hind_Siliguri({
+  subsets: ['bengali'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-bengali',
+  display: 'swap',
+});
+
+export const viewport = {
+  themeColor: '#0B4F4A',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata = {
   title: 'MediBridge - Smart Clinical Prescription & Pharmacy Assistant',
   description:
-    'AI-powered clinical prescription digitization, dual-mode medication alarms, and real-time pharmacy proximity matching.',
+    'AI-powered clinical prescription digitization, dual-mode medication alarms, and real-time pharmacy proximity matching in Bangladesh.',
   manifest: '/manifest.json',
-  themeColor: '#0B4F4A',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'MediBridge',
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${plusJakarta.variable} ${hindSiliguri.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        <meta name="application-name" content="MediBridge" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="MediBridge" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="icon" href="/manifest.json" />
       </head>
       <body className="bg-background text-primaryText min-h-screen flex flex-col font-sans selection:bg-brand-light selection:text-brand">
         {children}

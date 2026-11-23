@@ -1,32 +1,62 @@
+import axios from 'axios';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-export async function fetchApi(endpoint, options = {}) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('medibridge_token') : null;
-
-  const defaultHeaders = {
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  },
+  timeout: 30000,
+});
 
-  const config = {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
-  };
+// Request Interceptor: Attach JWT Bearer Token from localStorage
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('medibridge_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-  // If sending FormData (e.g. image upload), let browser set Content-Type with boundary
-  if (options.body instanceof FormData) {
-    delete config.headers['Content-Type'];
+// Response Interceptor: Extract clean data & handle errors
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    const message =
+      error.response?.data?.message || error.message || 'An unexpected network error occurred';
+    return Promise.reject(new Error(message));
+  }
+);
+
+// Backward-compatible fetchApi helper
+export async function fetchApi(endpoint, options = {}) {
+  const method = (options.method || 'GET').toLowerCase();
+  let data = undefined;
+
+  if (options.body) {
+    if (typeof options.body === 'string') {
+      try {
+        data = JSON.parse(options.body);
+      } catch {
+        data = options.body;
+      }
+    } else {
+      data = options.body;
+    }
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `API error: ${response.status}`);
-  }
-
-  return response.json();
+  return api.request({
+    url: endpoint,
+    method,
+    data,
+    headers: options.headers,
+  });
 }
+
+export default api;

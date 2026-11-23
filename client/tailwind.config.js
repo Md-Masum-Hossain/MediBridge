@@ -24,11 +24,14 @@ module.exports = {
           outStockText: '#B91C1C',
           outStockBg: '#FEF2F2',
         },
-        alarm: '#C2410C',
+        alarm: {
+          DEFAULT: '#C2410C',
+          light: '#FFF7ED',
+        },
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-        bengali: ['Hind Siliguri', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Plus Jakarta Sans', 'Inter', 'sans-serif'],
+        bengali: ['var(--font-bengali)', 'Hind Siliguri', 'sans-serif'],
       },
     },
   },
