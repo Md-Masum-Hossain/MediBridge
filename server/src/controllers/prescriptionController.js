@@ -47,35 +47,50 @@ export const parsePrescriptionImage = async (req, res) => {
     // Check if Gemini API Key is configured
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (apiKey && apiKey !== 'YOUR_GEMINI_API_KEY' && (imageBase64 || rawText)) {
+    if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY') {
+      return res.status(503).json({
+        success: false,
+        message: 'AI prescription scanning is not configured. Please contact support.',
+      });
+    }
+
+    if (!imageBase64 && !rawText) {
+      return res.status(400).json({
+        success: false,
+        message: 'No prescription image or text provided.',
+      });
+    }
+
+    if (imageBase64 || rawText) {
       try {
-        const prompt = `
-You are a senior clinical pharmacist analyzing a handwritten or printed prescription from Bangladesh.
-Analyze the provided prescription image or text.
-Extract into STRICT JSON format with the following keys:
+        const prompt = `You are a medical transcription assistant reviewing a prescription from Bangladesh.
+Transcribe ONLY the exact text that is visibly written or printed in this prescription image.
+Do NOT guess, invent, or add any medicine names, dosages, doctor information, or any other detail that is not clearly visible in the image.
+If a field is illegible or absent, return an empty string "" for that field. If no medicines are legible, return an empty medicines array [].
+
+Extract into STRICT JSON format:
 {
   "doctorInfo": {
-    "name": "Doctor name or 'Dr. Md. Rafiqul Islam, MBBS, FCPS'",
-    "specialization": "Specialization or 'Internal Medicine'",
-    "hospitalOrClinic": "Hospital or Clinic name",
-    "prescriptionDate": "YYYY-MM-DD"
+    "name": "exact doctor name as written, or empty string",
+    "specialization": "exact specialization as written, or empty string",
+    "hospitalOrClinic": "exact clinic/hospital name as written, or empty string",
+    "prescriptionDate": "YYYY-MM-DD if visible, or empty string"
   },
   "medicines": [
     {
-      "medicineName": "Brand Name (e.g., Napa Extra, Seclo, Sergel, Monas)",
-      "genericName": "Generic compound (e.g. Paracetamol + Caffeine, Omeprazole)",
-      "strength": "e.g. 500mg, 20mg",
-      "dosageForm": "Tablet / Capsule / Syrup",
-      "dosagePattern": "e.g. 1+0+1, 0+0+1, 1+1+1, 1+0+0",
-      "mealInstruction": "After Meal / Before Meal / With Meal",
-      "duration": "e.g. 7 days, 14 days",
-      "durationDays": 7,
-      "instructionsBn": "Bengali instruction for patient, e.g. খাওয়ার পরে দিনে ২ বার"
+      "medicineName": "exact brand name as written in the prescription",
+      "genericName": "generic name if written, otherwise empty string",
+      "strength": "exact strength as written (e.g. 500mg), or empty string",
+      "dosageForm": "Tablet / Capsule / Syrup / Injection / etc., or empty string",
+      "dosagePattern": "pattern as written (e.g. 1+0+1), or empty string",
+      "mealInstruction": "After Meal / Before Meal / With Meal as written, or empty string",
+      "duration": "duration as written (e.g. 7 days), or empty string",
+      "durationDays": 0,
+      "instructionsBn": "Bengali instruction if written, otherwise empty string"
     }
   ]
 }
-Return ONLY valid raw JSON without markdown backticks.
-`;
+Return ONLY valid raw JSON without markdown backticks or any other text.`;
 
         const requestBody = {
           contents: [
@@ -107,75 +122,33 @@ Return ONLY valid raw JSON without markdown backticks.
           }
         );
 
-        if (geminiRes.ok) {
-          const geminiJson = await geminiRes.json();
-          const rawReply = geminiJson.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (rawReply) {
-            const cleanJsonStr = rawReply.replace(/```json/g, '').replace(/```/g, '').trim();
-            extractedData = JSON.parse(cleanJsonStr);
-          }
+        if (!geminiRes.ok) {
+          const errBody = await geminiRes.text().catch(() => '');
+          console.error('[Gemini OCR] API error:', geminiRes.status, errBody);
+          return res.status(502).json({
+            success: false,
+            message: `AI vision service returned an error (${geminiRes.status}). Please try again.`,
+          });
         }
-      } catch (geminiError) {
-        console.warn('[Gemini OCR Warning] Fallback to clinical engine:', geminiError.message);
-      }
-    }
 
-    // High-accuracy clinical fallback template if Gemini key was missing or parsing timed out
-    if (!extractedData || !extractedData.medicines || extractedData.medicines.length === 0) {
-      extractedData = {
-        doctorInfo: {
-          name: 'Prof. Dr. M. A. Hasan, FCPS (Medicine)',
-          specialization: 'Senior Consultant, General & Internal Medicine',
-          hospitalOrClinic: 'Square Hospitals Ltd., Dhaka',
-          prescriptionDate: new Date().toISOString().split('T')[0],
-        },
-        medicines: [
-          {
-            medicineName: 'Napa Extra',
-            genericName: 'Paracetamol + Caffeine',
-            strength: '500 mg + 65 mg',
-            dosageForm: 'Tablet',
-            dosagePattern: '1+0+1',
-            mealInstruction: 'After Meal',
-            duration: '5 days',
-            durationDays: 5,
-            instructionsBn: 'খাওয়ার পর ভরা পেটে দিনে ২ বার (সকাল ও রাত)',
-          },
-          {
-            medicineName: 'Seclo 20',
-            genericName: 'Omeprazole',
-            strength: '20 mg',
-            dosageForm: 'Capsule',
-            dosagePattern: '1+0+0',
-            mealInstruction: 'Before Meal',
-            duration: '14 days',
-            durationDays: 14,
-            instructionsBn: 'সকালে খাওয়ার ২০ মিনিট পূর্বে খালি পেটে খাবেন',
-          },
-          {
-            medicineName: 'Fexo 120',
-            genericName: 'Fexofenadine Hydrochloride',
-            strength: '120 mg',
-            dosageForm: 'Tablet',
-            dosagePattern: '0+0+1',
-            mealInstruction: 'After Meal',
-            duration: '7 days',
-            durationDays: 7,
-            instructionsBn: 'রাতে খাওয়ার পরে ১ টি করে খাবেন',
-          },
-          {
-            medicineName: 'Monas 10',
-            genericName: 'Montelukast Sodium',
-            strength: '10 mg',
-            dosageForm: 'Tablet',
-            dosagePattern: '0+0+1',
-            mealInstruction: 'At Bedtime',
-            duration: '30 days',
-            durationDays: 30,
-            instructionsBn: 'প্রতিদিন রাতে ঘুমানোর পূর্বে ১ টি খাবেন',
-          },
-        ],
-      };
+        const geminiJson = await geminiRes.json();
+        const rawReply = geminiJson.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawReply) {
+          return res.status(500).json({
+            success: false,
+            message: 'AI prescription analysis returned no text. Please upload a clearer image.',
+          });
+        }
+
+        const cleanJsonStr = rawReply.replace(/```json/g, '').replace(/```/g, '').trim();
+        extractedData = JSON.parse(cleanJsonStr);
+      } catch (geminiError) {
+        console.error('[Gemini OCR Error]:', geminiError.message);
+        return res.status(500).json({
+          success: false,
+          message: 'AI prescription analysis failed. Please try again or upload a clearer image.',
+        });
+      }
     }
 
     // Enhance extracted medicines with MedicineMaster catalog data

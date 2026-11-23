@@ -8,7 +8,8 @@ export default function MainLayout({ children }) {
     <div className="min-h-screen flex flex-col bg-background selection:bg-brand-light selection:text-brand">
       <ServiceWorkerRegister />
       <Header />
-      <div className="flex-1 pb-24 max-w-md mx-auto w-full px-4 pt-4">
+      {/* Mobile: pb-24 for bottom nav clearance. Desktop: pb-8, no bottom nav */}
+      <div className="flex-1 pb-24 md:pb-8 w-full">
         {children}
       </div>
       <BottomNav />

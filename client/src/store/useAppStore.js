@@ -92,48 +92,8 @@ export const useAppStore = create((set, get) => ({
   // ----------------------------------------------------
   // Active Medications & Daily Dose Adherence Tracking
   // ----------------------------------------------------
-  // Initial default medications from Bangladeshi clinical guidelines
-  medications: [
-    {
-      _id: 'default-med-1',
-      medicineName: 'Napa Extra',
-      genericName: 'Paracetamol + Caffeine',
-      strength: '500 mg + 65 mg',
-      dosageForm: 'Tablet',
-      dosagePattern: '1+0+1',
-      mealInstruction: 'After Meal',
-      duration: '5 days',
-      instructionsBn: 'খাওয়ার পর ভরা পেটে দিনে ২ বার (সকাল ও রাত)',
-      timings: ['08:00', '20:30'],
-      isActive: true,
-    },
-    {
-      _id: 'default-med-2',
-      medicineName: 'Seclo 20',
-      genericName: 'Omeprazole',
-      strength: '20 mg',
-      dosageForm: 'Capsule',
-      dosagePattern: '1+0+0',
-      mealInstruction: 'Before Meal',
-      duration: '14 days',
-      instructionsBn: 'সকালে খাওয়ার ২০ মিনিট পূর্বে খালি পেটে খাবেন',
-      timings: ['08:00'],
-      isActive: true,
-    },
-    {
-      _id: 'default-med-3',
-      medicineName: 'Monas 10',
-      genericName: 'Montelukast Sodium',
-      strength: '10 mg',
-      dosageForm: 'Tablet',
-      dosagePattern: '0+0+1',
-      mealInstruction: 'At Bedtime',
-      duration: '30 days',
-      instructionsBn: 'প্রতিদিন রাতে ঘুমানোর পূর্বে ১ টি খাবেন',
-      timings: ['20:30'],
-      isActive: true,
-    },
-  ],
+  // Starts empty — medications are populated after scanning a real prescription
+  medications: [],
 
   setMedications: (medications) => set({ medications }),
 
@@ -208,7 +168,7 @@ export const useAppStore = create((set, get) => ({
   // Coordinates format: [longitude, latitude]. Default: Dhanmondi, Dhaka
   userCoordinates: [90.3756, 23.7461],
   nearbyPharmacies: [],
-  selectedFilterMeds: ['Napa Extra', 'Seclo 20', 'Monas 10'],
+  selectedFilterMeds: [],
 
   setUserCoordinates: (coords) => set({ userCoordinates: coords }),
   setNearbyPharmacies: (nearbyPharmacies) => set({ nearbyPharmacies }),
