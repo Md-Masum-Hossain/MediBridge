@@ -1,0 +1,21 @@
+{
+  "name": "MediBridge - Medicine & Pharmacy Assistant",
+  "short_name": "MediBridge",
+  "description": "Smart clinical prescription digitizer, dual-mode medication alarms, and live local pharmacy stock locator.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#0B4F4A",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
