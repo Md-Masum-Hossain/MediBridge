@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Camera,
   Upload,
-  Clipboard,
   CheckCircle,
   FileDown,
   Volume2,
@@ -17,6 +16,9 @@ import {
   Clock,
   Calendar,
   AlertCircle,
+  X,
+  ZoomIn,
+  RotateCcw,
 } from 'lucide-react';
 import api from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
@@ -32,6 +34,13 @@ export default function PrescriptionScanner() {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const lastFileRef = useRef(null);
+
+  // Webcam modal refs & state
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const [showCameraModal, setShowCameraModal] = useState(false);
+  const [cameraError, setCameraError] = useState('');
 
   const { addPrescription, user } = useAppStore();
 
@@ -40,8 +49,66 @@ export default function PrescriptionScanner() {
   const [extractedData, setExtractedData] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [scanFailed, setScanFailed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+
+  // ----------------------------------------------------------------
+  // Webcam Modal: open stream, capture frame, cleanup
+  // ----------------------------------------------------------------
+  const stopCameraStream = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+  }, []);
+
+  const openCameraModal = async () => {
+    setCameraError('');
+    setShowCameraModal(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+      });
+      streamRef.current = stream;
+      // Attach stream after modal has mounted
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(() => {});
+        }
+      }, 80);
+    } catch {
+      setCameraError(
+        'Camera access denied or unavailable. Please upload an image instead.'
+      );
+    }
+  };
+
+  const closeCameraModal = () => {
+    stopCameraStream();
+    setShowCameraModal(false);
+    setCameraError('');
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          closeCameraModal();
+          handleImageUpload(blob);
+        }
+      },
+      'image/jpeg',
+      0.9
+    );
+  };
 
   // ----------------------------------------------------------------
   // Mode 2: Global Ctrl+V clipboard image paste listener
@@ -73,33 +140,51 @@ export default function PrescriptionScanner() {
   // Image Processing & OCR Pipeline
   // ----------------------------------------------------------------
   const handleImageUpload = async (file) => {
-    if (!file) return;
+    const target = file || lastFileRef.current;
+    if (!target) return;
+    lastFileRef.current = target;
 
-    setErrorMessage('');
+    setScanFailed(false);
     setSaveSuccess(false);
     setIsScanning(true);
     setExtractedData(null);
 
     try {
       // 1. Client-side Image Compression (Reduces large mobile photos to ~200KB)
-      const compressedBase64 = await compressImage(file, 1280, 0.8);
+      let compressedBase64;
+      if (typeof target === 'string' && target.startsWith('data:')) {
+        compressedBase64 = target;
+      } else {
+        compressedBase64 = await compressImage(target, 1280, 0.8);
+      }
       setPreviewImage(compressedBase64);
 
       // 2. Send to Gemini Vision OCR Endpoint
-      const response = await api.post('/prescriptions/scan', {
-        imageBase64: compressedBase64,
-      });
+      const response = await api.post(
+        '/prescriptions/scan',
+        {
+          imageBase64: compressedBase64,
+        },
+        { timeout: 60000 }
+      );
 
       if (response?.data) {
         setExtractedData(response.data);
+        setScanFailed(false);
       } else {
         throw new Error('Could not parse prescription data.');
       }
     } catch (err) {
       console.error('[Scan Error]:', err);
-      setErrorMessage(err.message || 'Prescription scanning failed. Please try again.');
+      setScanFailed(true);
     } finally {
       setIsScanning(false);
+    }
+  };
+
+  const handleRetry = () => {
+    if (lastFileRef.current) {
+      handleImageUpload(lastFileRef.current);
     }
   };
 
@@ -193,10 +278,11 @@ export default function PrescriptionScanner() {
   };
 
   const handleReset = () => {
+    lastFileRef.current = null;
     setPreviewImage(null);
     setExtractedData(null);
     setSaveSuccess(false);
-    setErrorMessage('');
+    setScanFailed(false);
     stopVoiceReadout();
     setIsSpeaking(false);
   };
@@ -250,7 +336,7 @@ export default function PrescriptionScanner() {
           {/* Quick Buttons for Mobile Camera & File Select */}
           <div className="flex items-center justify-center gap-2.5 mt-5">
             <button
-              onClick={() => cameraInputRef.current?.click()}
+              onClick={openCameraModal}
               className="py-2 px-4 rounded-lg bg-brand text-white text-xs font-semibold flex items-center gap-2 hover:bg-brand-hover active:opacity-90 transition-colors"
             >
               <Camera className="w-4 h-4" />
@@ -310,32 +396,52 @@ export default function PrescriptionScanner() {
                     Analyzing Bangladeshi Medicines via Gemini Vision...
                   </span>
                 </>
-              ) : (
+              ) : scanFailed ? (
                 <>
-                  <CheckCircle className="w-4 h-4 text-badge-inStockText" />
+                  <AlertCircle className="w-4 h-4 text-gray-400 shrink-0" />
+                  <div>
+                    <span className="font-semibold text-primaryText block leading-tight">
+                      Scan Failed
+                    </span>
+                    <span className="text-[11px] text-secondaryText">
+                      Could not read the prescription. Try again.
+                    </span>
+                  </div>
+                </>
+              ) : extractedData ? (
+                <>
+                  <CheckCircle className="w-4 h-4 text-badge-inStockText shrink-0" />
                   <span className="font-semibold text-primaryText">
                     Prescription Analyzed
                   </span>
                 </>
-              )}
+              ) : null}
             </div>
 
-            <button
-              onClick={handleReset}
-              disabled={isScanning}
-              className="text-[11px] text-secondaryText hover:text-primaryText font-medium"
-            >
-              Scan Another
-            </button>
+            <div className="flex items-center gap-2">
+              {scanFailed && !isScanning && (
+                <button
+                  onClick={handleRetry}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#0B4F4A] rounded-lg hover:bg-[#083c38] active:scale-95 transition-all"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Try Again
+                </button>
+              )}
+              <button
+                onClick={handleReset}
+                disabled={isScanning}
+                className={
+                  scanFailed
+                    ? "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-secondaryText border border-divider rounded-lg hover:bg-gray-50 hover:text-primaryText transition-colors"
+                    : "inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium text-[#0B4F4A] border border-[#0B4F4A] rounded-lg hover:bg-[#0B4F4A] hover:text-white transition-colors"
+                }
+              >
+                {!scanFailed && <RotateCcw className="w-3.5 h-3.5" />}
+                Scan Another
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Error Message */}
-      {errorMessage && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
-          <span>{errorMessage}</span>
         </div>
       )}
 
@@ -513,6 +619,100 @@ export default function PrescriptionScanner() {
                 </button>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Live Webcam Capture Modal                                         */}
+      {/* ---------------------------------------------------------------- */}
+      <AnimatePresence>
+        {showCameraModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={(e) => e.target === e.currentTarget && closeCameraModal()}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="bg-white rounded-2xl overflow-hidden shadow-2xl w-full max-w-sm"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
+                <div className="flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-[#0B4F4A]" />
+                  <span className="text-sm font-semibold text-[#111827]">Camera</span>
+                </div>
+                <button
+                  onClick={closeCameraModal}
+                  className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                  aria-label="Close camera"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Video Preview or Error */}
+              <div className="relative bg-black aspect-[4/3] w-full flex items-center justify-center">
+                {cameraError ? (
+                  <div className="flex flex-col items-center gap-3 p-6 text-center">
+                    <AlertCircle className="w-8 h-8 text-red-400" />
+                    <p className="text-xs text-gray-300 leading-relaxed">{cameraError}</p>
+                    <button
+                      onClick={() => {
+                        closeCameraModal();
+                        fileInputRef.current?.click();
+                      }}
+                      className="mt-1 py-2 px-4 rounded-lg bg-white text-[#0B4F4A] text-xs font-semibold flex items-center gap-1.5 hover:bg-gray-100 transition-colors"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      Upload Instead
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Viewfinder corner marks */}
+                    <div className="absolute inset-6 pointer-events-none">
+                      {/* TL */}
+                      <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-white/70 rounded-tl" />
+                      {/* TR */}
+                      <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-white/70 rounded-tr" />
+                      {/* BL */}
+                      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-white/70 rounded-bl" />
+                      {/* BR */}
+                      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-white/70 rounded-br" />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Shutter Row */}
+              {!cameraError && (
+                <div className="flex items-center justify-center py-5 bg-[#F9FAFB]">
+                  <button
+                    onClick={capturePhoto}
+                    className="flex items-center gap-2 py-2.5 px-6 rounded-xl bg-[#0B4F4A] text-white text-sm font-semibold hover:bg-[#0a3f3b] active:scale-95 transition-all shadow-sm"
+                    aria-label="Capture photo"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                    Capture Photo
+                  </button>
+                </div>
+              )}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

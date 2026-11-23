@@ -31,9 +31,12 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-3.5 flex items-center justify-between w-full">
           {/* Minimal Typographic Wordmark */}
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded bg-brand flex items-center justify-center text-white font-bold text-sm tracking-wide">
-              MB
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/icons/icon-192x192.png"
+              alt="MediBridge Logo"
+              className="w-9 h-9 rounded-lg object-cover"
+            />
             <div className="flex flex-col">
               <span className="font-bold text-base text-brand tracking-tight leading-none">
                 MediBridge

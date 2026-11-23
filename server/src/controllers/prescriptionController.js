@@ -38,6 +38,68 @@ async function matchMedicineMaster(name) {
   return match;
 }
 
+const OCR_MODELS = [
+  'gemini-3.7-flash',
+  'gemini-3.8-flash',
+  'gemini-3.1-pro-preview',
+  'gemini-3.6-flash',
+];
+
+/**
+ * Helper to call Gemini Vision generateContent with a 25-second AbortController timeout
+ */
+async function callGeminiModel(model, requestBody, apiKey) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      }
+    );
+    clearTimeout(timeoutId);
+    return res;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      console.warn(`[Gemini OCR] Model ${model} timed out after 25s.`);
+    } else {
+      console.warn(`[Gemini OCR] Model ${model} fetch error:`, err.message);
+    }
+    return null;
+  }
+}
+
+/**
+ * Sequential model waterfall:
+ * Loops through OCR_MODELS trying each once with 25s timeout. If 503, 429, 404, or timeout,
+ * immediately moves to the next model without sleeping.
+ */
+async function callGeminiWaterfall(requestBody, apiKey) {
+  for (const model of OCR_MODELS) {
+    console.log(`[Gemini OCR] Trying waterfall model: ${model}...`);
+    const res = await callGeminiModel(model, requestBody, apiKey);
+
+    if (res && res.ok) {
+      console.log(`[Gemini OCR] Success with model: ${model}`);
+      return res;
+    }
+
+    if (res) {
+      const status = res.status;
+      const errText = await res.text().catch(() => '');
+      console.warn(`[Gemini OCR] Model ${model} returned HTTP ${status}:`, errText);
+    }
+  }
+
+  return null;
+}
+
 export const parsePrescriptionImage = async (req, res) => {
   try {
     const { imageBase64, rawText } = req.body;
@@ -111,32 +173,28 @@ Return ONLY valid raw JSON without markdown backticks or any other text.`;
               ],
             },
           ],
+          generationConfig: {
+            temperature: 0.1,
+            responseMimeType: 'application/json',
+          },
         };
 
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
-          }
-        );
+        const geminiRes = await callGeminiWaterfall(requestBody, apiKey);
 
-        if (!geminiRes.ok) {
-          const errBody = await geminiRes.text().catch(() => '');
-          console.error('[Gemini OCR] API error:', geminiRes.status, errBody);
-          return res.status(502).json({
+        if (!geminiRes || !geminiRes.ok) {
+          console.error('[Gemini OCR] All waterfall models failed.');
+          return res.status(503).json({
             success: false,
-            message: `AI vision service returned an error (${geminiRes.status}). Please try again.`,
+            message: 'Scan failed',
           });
         }
 
         const geminiJson = await geminiRes.json();
         const rawReply = geminiJson.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!rawReply) {
-          return res.status(500).json({
+          return res.status(503).json({
             success: false,
-            message: 'AI prescription analysis returned no text. Please upload a clearer image.',
+            message: 'Scan failed',
           });
         }
 
@@ -144,9 +202,9 @@ Return ONLY valid raw JSON without markdown backticks or any other text.`;
         extractedData = JSON.parse(cleanJsonStr);
       } catch (geminiError) {
         console.error('[Gemini OCR Error]:', geminiError.message);
-        return res.status(500).json({
+        return res.status(503).json({
           success: false,
-          message: 'AI prescription analysis failed. Please try again or upload a clearer image.',
+          message: 'Scan failed',
         });
       }
     }

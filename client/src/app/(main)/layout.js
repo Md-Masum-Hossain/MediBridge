@@ -14,6 +14,37 @@ export default function MainLayout({ children }) {
       </div>
       <BottomNav />
       <AlarmBottomSheet />
+
+      {/* ── Clinical Editorial Footer ── desktop only ── */}
+      <footer className="hidden md:block border-t border-[#E5E7EB]">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+          {/* Left: wordmark + disclaimer */}
+          <p className="text-[11px] text-[#4B5563] leading-snug">
+            <span className="font-semibold text-[#0B4F4A] tracking-tight mr-1.5">MediBridge</span>
+            AI-assisted digitization — verify dosages with a licensed pharmacist.
+          </p>
+
+          {/* Right: copyright + links */}
+          <p className="text-[11px] text-[#4B5563] flex items-center gap-1.5 shrink-0">
+            <span>© 2026</span>
+            <a
+              href="https://www.masumsportfolio.me/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[#4B5563] hover:text-[#0B4F4A] hover:underline underline-offset-2 decoration-[#0B4F4A] transition-colors"
+            >
+              Md. Masum Hossain
+            </a>
+            <span className="text-[#9CA3AF]">·</span>
+            <a
+              href="mailto:mdmasumhossain1712@gmail.com"
+              className="text-[#4B5563] hover:text-[#0B4F4A] hover:underline underline-offset-2 decoration-[#0B4F4A] transition-colors"
+            >
+              Email
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

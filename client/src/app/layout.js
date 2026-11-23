@@ -28,6 +28,11 @@ export const metadata = {
   description:
     'AI-powered clinical prescription digitization, dual-mode medication alarms, and real-time pharmacy proximity matching in Bangladesh.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/icon-192x192.png',
+    shortcut: '/icons/icon-192x192.png',
+    apple: '/icons/icon-192x192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -45,7 +50,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-title" content="MediBridge" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="icon" href="/manifest.json" />
+        <link rel="icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="bg-background text-primaryText min-h-screen flex flex-col font-sans selection:bg-brand-light selection:text-brand">
         {children}
