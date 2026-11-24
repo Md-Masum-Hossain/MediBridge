@@ -301,6 +301,88 @@ export const getPrescriptionById = async (req, res) => {
   }
 };
 
+/**
+ * PATCH /api/medications/:prescriptionId/:medicineIndex/status
+ * Toggles or sets a medicine's status ('active' | 'stopped').
+ * When stopped, clears daily timings to disable reminder scheduling.
+ */
+export const updateMedicineStatus = async (req, res) => {
+  try {
+    const { prescriptionId, medicineIndex } = req.params;
+    // Optionally accept an explicit { status } in body; otherwise toggle.
+    const { status: explicitStatus } = req.body;
+
+    const prescription = await Prescription.findById(prescriptionId);
+    if (!prescription) {
+      return res.status(404).json({ message: 'Prescription not found' });
+    }
+
+    const med = prescription.medicines[Number(medicineIndex)];
+    if (!med) {
+      return res.status(404).json({ message: 'Medicine not found at given index' });
+    }
+
+    // Determine new status
+    if (explicitStatus === 'active' || explicitStatus === 'stopped') {
+      med.status = explicitStatus;
+    } else {
+      // Toggle
+      med.status = med.status === 'stopped' ? 'active' : 'stopped';
+    }
+
+    // When stopped, disable in-app reminder timings; when re-activated keep them intact.
+    if (med.status === 'stopped') {
+      med.isActive = false;
+    } else {
+      med.isActive = true;
+    }
+
+    await prescription.save();
+
+    res.json({
+      success: true,
+      message: `Medicine status set to '${med.status}'`,
+      medicine: med,
+      prescription,
+    });
+  } catch (error) {
+    console.error('[UpdateMedicineStatus Error]:', error);
+    res.status(500).json({ message: error.message || 'Failed to update medicine status' });
+  }
+};
+
+/**
+ * DELETE /api/medications/:prescriptionId/:medicineIndex
+ * Permanently removes a medicine subdocument from the prescription.
+ */
+export const deleteMedicine = async (req, res) => {
+  try {
+    const { prescriptionId, medicineIndex } = req.params;
+    const idx = Number(medicineIndex);
+
+    const prescription = await Prescription.findById(prescriptionId);
+    if (!prescription) {
+      return res.status(404).json({ message: 'Prescription not found' });
+    }
+
+    if (idx < 0 || idx >= prescription.medicines.length) {
+      return res.status(404).json({ message: 'Medicine not found at given index' });
+    }
+
+    prescription.medicines.splice(idx, 1);
+    await prescription.save();
+
+    res.json({
+      success: true,
+      message: 'Medicine removed from prescription',
+      prescription,
+    });
+  } catch (error) {
+    console.error('[DeleteMedicine Error]:', error);
+    res.status(500).json({ message: error.message || 'Failed to delete medicine' });
+  }
+};
+
 export const logDoseAction = async (req, res) => {
   try {
     const { prescriptionId, medicineIndex } = req.params;

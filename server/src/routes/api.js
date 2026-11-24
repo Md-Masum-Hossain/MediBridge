@@ -12,6 +12,8 @@ import {
   getUserPrescriptions,
   getPrescriptionById,
   logDoseAction,
+  updateMedicineStatus,
+  deleteMedicine,
 } from '../controllers/prescriptionController.js';
 import { protect, optionalAuth } from '../middleware/auth.js';
 import Pharmacy from '../models/Pharmacy.js';
@@ -115,6 +117,10 @@ router.post('/prescriptions', optionalAuth, createPrescription);
 router.get('/prescriptions', optionalAuth, getUserPrescriptions);
 router.get('/prescriptions/:id', optionalAuth, getPrescriptionById);
 router.post('/prescriptions/:prescriptionId/medicines/:medicineIndex/log', optionalAuth, logDoseAction);
+
+// Stop / Resume & Remove Medication Routes
+router.patch('/medications/:prescriptionId/:medicineIndex/status', optionalAuth, updateMedicineStatus);
+router.delete('/medications/:prescriptionId/:medicineIndex', optionalAuth, deleteMedicine);
 
 // Web Push Notification Routes
 router.get('/notifications/vapid-key', (req, res) => {

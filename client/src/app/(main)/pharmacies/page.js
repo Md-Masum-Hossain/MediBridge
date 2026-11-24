@@ -16,6 +16,7 @@ import { useAppStore } from '@/store/useAppStore';
 import PharmacyCard from '@/components/pharmacy/PharmacyCard';
 
 const DHAKA_PRESETS = [
+  { name: 'Savar / Khagan', lat: 23.8760, lng: 90.3080 },
   { name: 'Dhanmondi', lat: 23.7461, lng: 90.3756 },
   { name: 'Uttara', lat: 23.8732, lng: 90.3984 },
   { name: 'Mirpur', lat: 23.8071, lng: 90.3688 },

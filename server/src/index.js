@@ -29,12 +29,17 @@ app.get('/', (req, res) => {
 
 // Start Server and Database Connection
 const startServer = async () => {
-  await connectDB();
-  initReminderCron();
-  app.listen(PORT, () => {
-    console.log(`[MediBridge] Server running on http://localhost:${PORT}`);
-    console.log(`[MediBridge] API endpoints active at http://localhost:${PORT}/api`);
-  });
+  try {
+    await connectDB();
+    initReminderCron();
+    app.listen(PORT, () => {
+      console.log(`[MediBridge] Server running on http://localhost:${PORT}`);
+      console.log(`[MediBridge] API endpoints active at http://localhost:${PORT}/api`);
+    });
+  } catch (err) {
+    console.error(`[MediBridge Error] Failed to start server:`, err.message);
+    process.exit(1);
+  }
 };
 
 startServer();

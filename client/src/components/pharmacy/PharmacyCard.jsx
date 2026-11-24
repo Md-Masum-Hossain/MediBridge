@@ -10,10 +10,13 @@ export default function PharmacyCard({ pharmacy, targetMedicines = [] }) {
     location,
     contactPhone,
     distance,
-    matchPercentage,
     matchedItems = [],
     inventory = [],
     operatingHours,
+    // Server-computed totals (Fix 1: use server counts, never re-compute from displayItems)
+    inStockCount: serverInStockCount,
+    totalTargetMeds,
+    unmatchedNames = [],
   } = pharmacy;
 
   // Format distance
@@ -24,12 +27,20 @@ export default function PharmacyCard({ pharmacy, targetMedicines = [] }) {
       ? String(distance)
       : 'Nearby';
 
-  // Display inventory items (either matched items or first 4 from inventory)
-  const displayItems =
-    matchedItems.length > 0 ? matchedItems : inventory.slice(0, 4);
+  // Display: show matched items (with server annotations) OR fallback to first 4 from inventory
+  const hasMatches = matchedItems.length > 0;
+  const displayItems = hasMatches ? matchedItems : inventory.slice(0, 4);
 
-  const inStockCount = displayItems.filter((item) => item.inStock).length;
-  const totalCount = displayItems.length;
+  // Fix 1 — always use server-provided counts so the ratio is X/totalRequested, not X/X
+  const inStockCount =
+    hasMatches && typeof serverInStockCount === 'number'
+      ? serverInStockCount
+      : displayItems.filter((item) => item.inStock).length;
+
+  const totalCount =
+    hasMatches && typeof totalTargetMeds === 'number' && totalTargetMeds > 0
+      ? totalTargetMeds
+      : displayItems.length;
 
   const lat = location?.coordinates?.[1] || 23.7461;
   const lng = location?.coordinates?.[0] || 90.3756;
@@ -60,7 +71,7 @@ export default function PharmacyCard({ pharmacy, targetMedicines = [] }) {
         </span>
       </div>
 
-      {/* Stock Availability Ratio Bar */}
+      {/* Stock Availability Ratio — Fix 1: always X/totalRequested */}
       <div className="mt-3 pt-3 hairline-divider-t flex items-center justify-between text-xs">
         <span className="text-secondaryText text-[11px] font-medium">Prescription Stock Match</span>
         <span
@@ -76,29 +87,50 @@ export default function PharmacyCard({ pharmacy, targetMedicines = [] }) {
         </span>
       </div>
 
-      {/* Itemized Medicine Badges (In-Stock vs Out-of-Stock) */}
+      {/* Itemized Medicine Badges — Fix 1: Generic Alt label when isGenericMatch */}
       <div className="mt-2.5 flex flex-wrap gap-1.5">
-        {displayItems.map((item) => (
-          <span
-            key={item.medicineId || item.brandName}
-            className={`text-[11px] px-2 py-1 rounded flex items-center gap-1 font-medium border ${
-              item.inStock
-                ? 'bg-badge-inStockBg text-badge-inStockText border-green-200'
-                : 'bg-badge-outStockBg text-badge-outStockText border-red-200'
-            }`}
-          >
-            {item.inStock ? (
-              <CheckCircle2 className="w-3 h-3 text-badge-inStockText" />
-            ) : (
-              <XCircle className="w-3 h-3 text-badge-outStockText" />
-            )}
-            <span>{item.brandName}</span>
-            {item.unitPrice ? (
-              <span className="text-[10px] opacity-75">৳{item.unitPrice}</span>
-            ) : null}
-          </span>
-        ))}
+        {displayItems.map((item) => {
+          const showAltLabel =
+            item.isGenericMatch &&
+            item.originalQuery &&
+            item.originalQuery.toLowerCase() !== (item.brandName || '').toLowerCase();
+
+          return (
+            <span
+              key={item.medicineId || item.brandName}
+              className={`text-[11px] px-2 py-1 rounded flex items-center gap-1 font-medium border ${
+                item.inStock
+                  ? 'bg-badge-inStockBg text-badge-inStockText border-green-200'
+                  : 'bg-badge-outStockBg text-badge-outStockText border-red-200'
+              }`}
+              title={showAltLabel ? `Generic alternative for: ${item.originalQuery}` : undefined}
+            >
+              {item.inStock ? (
+                <CheckCircle2 className="w-3 h-3 text-badge-inStockText" />
+              ) : (
+                <XCircle className="w-3 h-3 text-badge-outStockText" />
+              )}
+              <span>{item.brandName}</span>
+              {showAltLabel && (
+                <span className="text-[9px] font-bold ml-0.5 bg-amber-100 text-amber-700 px-1 rounded leading-tight">
+                  Alt
+                </span>
+              )}
+              {item.unitPrice ? (
+                <span className="text-[10px] opacity-75">৳{item.unitPrice}</span>
+              ) : null}
+            </span>
+          );
+        })}
       </div>
+
+      {/* Fix 1: Unavailable items listed in muted text below the badges */}
+      {unmatchedNames.length > 0 && (
+        <p className="mt-1.5 text-[10px] text-secondaryText leading-snug">
+          <span className="font-semibold">Unavailable:</span>{' '}
+          {unmatchedNames.join(', ')}
+        </p>
+      )}
 
       {/* Operating Hours & Action Controls */}
       <div className="mt-3.5 pt-3 hairline-divider-t flex items-center justify-between gap-2">

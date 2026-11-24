@@ -61,6 +61,12 @@ const prescriptionItemSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  // Clinical status of this medicine within the prescription
+  status: {
+    type: String,
+    enum: ['active', 'stopped'],
+    default: 'active',
+  },
   // Adherence log tracking whether dosage was taken, snoozed, or missed
   takenLog: [
     {

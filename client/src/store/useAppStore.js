@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { updateMedicineStatus as apiUpdateMedicineStatus, deleteMedicine as apiDeleteMedicine } from '@/lib/api';
 
 // Helper to get today's date string YYYY-MM-DD
 export const getTodayKey = () => new Date().toISOString().split('T')[0];
@@ -96,6 +97,50 @@ export const useAppStore = create((set, get) => ({
   medications: [],
 
   setMedications: (medications) => set({ medications }),
+
+  /**
+   * Stop or resume a medication. Persists to the backend and updates local state.
+   * Returns the updated medication object on success, throws on failure.
+   * @param {string} prescriptionId
+   * @param {number} medicineIndex - index within prescription.medicines[]
+   * @param {string|undefined} status - 'active' | 'stopped'. Omit to toggle.
+   */
+  stopOrResumeMedication: async (prescriptionId, medicineIndex, status) => {
+    const result = await apiUpdateMedicineStatus(prescriptionId, medicineIndex, status);
+    // result.prescription contains the full updated prescription
+    const updatedPrescription = result?.data?.prescription || result?.prescription;
+    if (updatedPrescription) {
+      const { prescriptions } = get();
+      const updated = prescriptions.map((rx) =>
+        String(rx._id) === String(prescriptionId) ? updatedPrescription : rx
+      );
+      set({ prescriptions: updated });
+      // Rebuild flat medications list from updated prescriptions
+      const allMeds = updated.flatMap((rx) => rx.medicines || []);
+      set({ medications: allMeds });
+    }
+    return result;
+  },
+
+  /**
+   * Permanently remove a medication from a prescription. Persists and updates local state.
+   * @param {string} prescriptionId
+   * @param {number} medicineIndex
+   */
+  removeMedication: async (prescriptionId, medicineIndex) => {
+    const result = await apiDeleteMedicine(prescriptionId, medicineIndex);
+    const updatedPrescription = result?.data?.prescription || result?.prescription;
+    if (updatedPrescription) {
+      const { prescriptions } = get();
+      const updated = prescriptions.map((rx) =>
+        String(rx._id) === String(prescriptionId) ? updatedPrescription : rx
+      );
+      set({ prescriptions: updated });
+      const allMeds = updated.flatMap((rx) => rx.medicines || []);
+      set({ medications: allMeds });
+    }
+    return result;
+  },
 
   // Dose logs for today: { [medName]: { morning: true, noon: false, night: false } }
   doseLogs: {},

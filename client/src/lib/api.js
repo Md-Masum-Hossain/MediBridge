@@ -59,4 +59,25 @@ export async function fetchApi(endpoint, options = {}) {
   });
 }
 
+// ── Medication Stop/Resume & Remove helpers ──────────────────────────────────
+
+/**
+ * Toggle (or explicitly set) a medicine's status to 'active' or 'stopped'.
+ * @param {string} prescriptionId
+ * @param {number} medicineIndex
+ * @param {string|undefined} status  - optional: 'active' | 'stopped'. Omit to toggle.
+ */
+export function updateMedicineStatus(prescriptionId, medicineIndex, status) {
+  return api.patch(`/medications/${prescriptionId}/${medicineIndex}/status`, status ? { status } : {});
+}
+
+/**
+ * Permanently remove a medicine from a prescription.
+ * @param {string} prescriptionId
+ * @param {number} medicineIndex
+ */
+export function deleteMedicine(prescriptionId, medicineIndex) {
+  return api.delete(`/medications/${prescriptionId}/${medicineIndex}`);
+}
+
 export default api;

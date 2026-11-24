@@ -151,3 +151,125 @@ export function generatePrescriptionPdf(prescription) {
   const cleanFileName = `Prescription_${dateStr.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
   doc.save(cleanFileName);
 }
+
+/**
+ * Generates a "My Active Regimen" PDF from a flat list of medication objects.
+ * Uses the same Clinical Editorial design language as generatePrescriptionPdf.
+ * @param {Array} meds - array of medicine objects (from prescriptions[].medicines[])
+ */
+export function generateRegimenPdf(meds) {
+  if (!meds || meds.length === 0) return;
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const pageWidth = 210;
+  const margin = 16;
+  const contentWidth = pageWidth - margin * 2;
+
+  // Header
+  doc.setFillColor(11, 79, 74);
+  doc.rect(0, 0, pageWidth, 28, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(255, 255, 255);
+  doc.text('MediBridge — Active Regimen', margin, 18);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(220, 235, 233);
+  const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  doc.text(`Exported ${dateStr}`, pageWidth - margin - 36, 18);
+
+  // Subtitle
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(75, 85, 99);
+  doc.text(
+    `${meds.length} active medication${meds.length !== 1 ? 's' : ''} in current regimen`,
+    margin,
+    38
+  );
+
+  // Hairline
+  doc.setDrawColor(229, 231, 235);
+  doc.setLineWidth(0.4);
+  doc.line(margin, 42, pageWidth - margin, 42);
+
+  // Table headers
+  const yHeader = 50;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(11, 79, 74);
+  doc.text('Medicine', margin, yHeader);
+  doc.text('Dosage', margin + 85, yHeader);
+  doc.text('Timing', margin + 115, yHeader);
+  doc.text('Duration', margin + 155, yHeader);
+
+  doc.setDrawColor(11, 79, 74);
+  doc.setLineWidth(0.5);
+  doc.line(margin, yHeader + 3, pageWidth - margin, yHeader + 3);
+
+  // Rows
+  let y = yHeader + 11;
+  meds.forEach((med, idx) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(17, 24, 39);
+    doc.text(
+      `${idx + 1}. ${med.medicineName || 'Medicine'}${med.strength ? ` (${med.strength})` : ''}`,
+      margin,
+      y
+    );
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(107, 114, 128);
+    doc.text(
+      `${med.genericName || ''} • ${med.dosageForm || 'Tablet'}`,
+      margin + 4.5,
+      y + 4.5
+    );
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9.5);
+    doc.setTextColor(17, 24, 39);
+    doc.text(med.dosagePattern || '1+0+1', margin + 85, y);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(75, 85, 99);
+    doc.text(med.mealInstruction || 'After Meal', margin + 115, y);
+
+    doc.setFontSize(9);
+    doc.setTextColor(17, 24, 39);
+    doc.text(med.duration || '7 days', margin + 155, y);
+
+    doc.setDrawColor(229, 231, 235);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y + 8, pageWidth - margin, y + 8);
+
+    y += 14;
+  });
+
+  // Footer
+  const footerY = 282;
+  doc.setDrawColor(229, 231, 235);
+  doc.setLineWidth(0.4);
+  doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(156, 163, 175);
+  doc.text(
+    'Notice: Always confirm dosage and instructions with your registered doctor or pharmacist.',
+    margin,
+    footerY
+  );
+  doc.text('Powered by MediBridge Healthcare Systems', pageWidth - margin - 58, footerY);
+
+  const fileName = `MyRegimen_${dateStr.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+  doc.save(fileName);
+}

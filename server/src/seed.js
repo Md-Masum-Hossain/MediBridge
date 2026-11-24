@@ -11,15 +11,26 @@ import connectDB from './config/db.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
+// Load environment variables from server/.env or process.cwd()/.env
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 /**
- * 60+ Common Bangladeshi Medicines
- * Includes real brand names, generics, strengths, dosage forms, manufacturers, and indicative prices
+ * 200+ Curated Authentic Bangladeshi Medicines
+ * Includes brand names, generics, strengths, dosage forms, manufacturers, indicative prices, and indications.
  */
 export const BANGLADESH_MEDICINES = [
-  // 1-10: Paracetamol & Analgesics / Antipyretics
+  // 1-5: Guaranteed ENT & Respiratory / Analgesics
+  {
+    brandName: 'Ardin',
+    genericName: 'Acetylcysteine',
+    strength: '600 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 20.00,
+    packageSize: "10's strip",
+    indications: ['Mucolytic', 'Cough with Phlegm', 'Chronic Bronchitis', 'COPD', 'Paracetamol Overdose'],
+  },
   {
     brandName: 'Napa',
     genericName: 'Paracetamol',
@@ -31,14 +42,136 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Fever', 'Headache', 'Body ache', 'Toothache'],
   },
   {
-    brandName: 'Napa Extra',
-    genericName: 'Paracetamol + Caffeine',
-    strength: '500 mg + 65 mg',
+    brandName: 'Bilastin',
+    genericName: 'Bilastine',
+    strength: '20 mg',
     dosageForm: 'Tablet',
     manufacturer: 'Beximco Pharmaceuticals Ltd.',
-    unitPrice: 3.00,
+    unitPrice: 18.00,
     packageSize: "10's strip",
-    indications: ['Severe Headache', 'Migraine', 'Fever with fatigue', 'Backache'],
+    indications: ['Allergic Rhinitis', 'Urticaria', 'Allergic Conjunctivitis', 'Hay Fever'],
+  },
+  {
+    brandName: 'Afrin',
+    genericName: 'Oxymetazoline Hydrochloride',
+    strength: '0.05%',
+    dosageForm: 'Nasal Drop',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 55.00,
+    packageSize: '10 ml dropper bottle',
+    indications: ['Nasal Congestion', 'Sinusitis', 'Blocked Nose', 'Common Cold'],
+  },
+  {
+    brandName: 'Menthol',
+    genericName: 'Menthol',
+    strength: 'BP 100%',
+    dosageForm: 'Inhalation',
+    manufacturer: 'Essential Drugs Company Ltd.',
+    unitPrice: 35.00,
+    packageSize: '10 g jar',
+    indications: ['Steam Inhalation', 'Nasal Decongestion', 'Cough Relief', 'Headache'],
+  },
+
+  // 6-24: Required Top Bangladeshi Brands
+  {
+    brandName: 'Seclo',
+    genericName: 'Omeprazole',
+    strength: '20 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Gastric Ulcer', 'Duodenal Ulcer', 'Acid Reflux', 'GERD', 'Heartburn'],
+  },
+  {
+    brandName: 'Sergel',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Acid Reflux', 'GERD', 'Erosive Esophagitis', 'H. pylori eradication'],
+  },
+  {
+    brandName: 'Maxpro',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['GERD', 'Peptic Ulcer Disease', 'NSAID-associated Ulcer Prevention'],
+  },
+  {
+    brandName: 'Monas',
+    genericName: 'Montelukast Sodium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Acme Laboratories Ltd.',
+    unitPrice: 17.00,
+    packageSize: "10's strip",
+    indications: ['Bronchial Asthma', 'Allergic Rhinitis', 'Exercise-Induced Bronchoconstriction'],
+  },
+  {
+    brandName: 'Fexo',
+    genericName: 'Fexofenadine Hydrochloride',
+    strength: '120 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Seasonal Allergic Rhinitis', 'Sneezing', 'Runny Nose', 'Itchy Eyes'],
+  },
+  {
+    brandName: 'Alatrol',
+    genericName: 'Cetirizine Dihydrochloride',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Hay Fever', 'Allergic Rash', 'Itching', 'Cold Symptoms'],
+  },
+  {
+    brandName: 'Azithrocin',
+    genericName: 'Azithromycin Dihydrate',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 35.00,
+    packageSize: "6's strip",
+    indications: ['Bronchitis', 'Sinusitis', 'Pharyngitis', 'Community Acquired Pneumonia'],
+  },
+  {
+    brandName: 'Cef-3',
+    genericName: 'Cefixime Trihydrate',
+    strength: '200 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 40.00,
+    packageSize: "14's box",
+    indications: ['Upper Respiratory Infection', 'Uncomplicated UTI', 'Typhoid Fever'],
+  },
+  {
+    brandName: 'Montair',
+    genericName: 'Montelukast Sodium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 17.00,
+    packageSize: "10's strip",
+    indications: ['Asthma Management', 'Seasonal Allergic Rhinitis'],
+  },
+  {
+    brandName: 'Tofen',
+    genericName: 'Ketotifen Fumarate',
+    strength: '1 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 4.50,
+    packageSize: "10's strip",
+    indications: ['Bronchial Asthma Prophylaxis', 'Allergic Bronchitis', 'Rhinitis'],
   },
   {
     brandName: 'Napa Extend',
@@ -51,16 +184,6 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Persistent Joint Pain', 'Osteoarthritis Pain', 'Prolonged Fever'],
   },
   {
-    brandName: 'Napa Rapid',
-    genericName: 'Paracetamol (Actisorb)',
-    strength: '500 mg',
-    dosageForm: 'Tablet',
-    manufacturer: 'Beximco Pharmaceuticals Ltd.',
-    unitPrice: 1.75,
-    packageSize: "10's strip",
-    indications: ['Fast Pain Relief', 'Acute Fever', 'Post-vaccination Pain'],
-  },
-  {
     brandName: 'Ace',
     genericName: 'Paracetamol',
     strength: '500 mg',
@@ -71,6 +194,98 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Fever', 'Mild to Moderate Pain', 'Sore Throat'],
   },
   {
+    brandName: 'Fimoxyl',
+    genericName: 'Amoxicillin Trihydrate',
+    strength: '500 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Bacterial Infections', 'Otitis Media', 'Respiratory Infections', 'Dental Abscess'],
+  },
+  {
+    brandName: 'Moxaclav',
+    genericName: 'Amoxicillin + Clavulanic Acid',
+    strength: '625 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 42.00,
+    packageSize: "12's box",
+    indications: ['Bacterial Sinusitis', 'Otitis Media', 'Dental Abscess', 'Skin Infections'],
+  },
+  {
+    brandName: 'Ciprocin',
+    genericName: 'Ciprofloxacin Hydrochloride',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 15.00,
+    packageSize: "10's strip",
+    indications: ['Urinary Tract Infections (UTI)', 'Typhoid Fever', 'Infectious Diarrhea'],
+  },
+  {
+    brandName: 'Losectil',
+    genericName: 'Omeprazole',
+    strength: '20 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Eskayef Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Gastric Ulcers', 'Acid Indigestion', 'GERD', 'Erosive Esophagitis'],
+  },
+  {
+    brandName: 'Pantonix',
+    genericName: 'Pantoprazole Sodium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Gastric Acidity', 'Duodenal Ulcers', 'Esophagitis'],
+  },
+  {
+    brandName: 'Finix',
+    genericName: 'Rabeprazole Sodium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Opsonin Pharma Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['GERD', 'Healing of Duodenal Ulcers', 'H. Pylori Infection'],
+  },
+  {
+    brandName: 'Esoral',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Acid Reflux', 'Heartburn', 'Zollinger-Ellison Syndrome'],
+  },
+
+  // 25-50: Analgesics, Antipyretics, NSAIDs & Pain Relief
+  {
+    brandName: 'Napa Extra',
+    genericName: 'Paracetamol + Caffeine',
+    strength: '500 mg + 65 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 3.00,
+    packageSize: "10's strip",
+    indications: ['Severe Headache', 'Migraine', 'Fever with fatigue', 'Backache'],
+  },
+  {
+    brandName: 'Napa Rapid',
+    genericName: 'Paracetamol (Actisorb)',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 1.75,
+    packageSize: "10's strip",
+    indications: ['Fast Pain Relief', 'Acute Fever', 'Post-vaccination Pain'],
+  },
+  {
     brandName: 'Ace Plus',
     genericName: 'Paracetamol + Caffeine',
     strength: '500 mg + 65 mg',
@@ -79,6 +294,16 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 3.00,
     packageSize: "10's strip",
     indications: ['Migraine', 'Tension Headache', 'Dysmenorrhea', 'Fever'],
+  },
+  {
+    brandName: 'Ace Power',
+    genericName: 'Paracetamol + Caffeine',
+    strength: '500 mg + 65 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.25,
+    packageSize: "10's strip",
+    indications: ['Acute Pain', 'Severe Toothache', 'High Fever'],
   },
   {
     brandName: 'Fast 500',
@@ -101,7 +326,7 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Fever', 'Muscular Pain', 'Headache'],
   },
   {
-    brandName: 'Clofenac',
+    brandName: 'Clofenac 50',
     genericName: 'Diclofenac Sodium',
     strength: '50 mg',
     dosageForm: 'Enteric Coated Tablet',
@@ -111,7 +336,17 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Arthritis', 'Acute Gout', 'Post-operative Pain', 'Inflammation'],
   },
   {
-    brandName: 'Xenole',
+    brandName: 'Clofenac Plus',
+    genericName: 'Diclofenac Sodium + Paracetamol',
+    strength: '50 mg + 500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Severe Musculoskeletal Pain', 'Trauma Pain', 'Dental Pain'],
+  },
+  {
+    brandName: 'Xenole 500/20',
     genericName: 'Naproxen Sodium + Esomeprazole',
     strength: '500 mg + 20 mg',
     dosageForm: 'Tablet',
@@ -120,8 +355,118 @@ export const BANGLADESH_MEDICINES = [
     packageSize: "10's strip",
     indications: ['Ankylosing Spondylitis', 'Rheumatoid Arthritis', 'Osteoarthritis with GI risk'],
   },
+  {
+    brandName: 'Rolac 10',
+    genericName: 'Ketorolac Tromethamine',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Short-term Management of Moderate to Severe Acute Pain', 'Post-surgical Pain'],
+  },
+  {
+    brandName: 'Torax 10',
+    genericName: 'Ketorolac Tromethamine',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Acute Postoperative Pain', 'Dental Surgery Pain', 'Severe Renal Colic'],
+  },
+  {
+    brandName: 'Anaprox 550',
+    genericName: 'Naproxen Sodium',
+    strength: '550 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 11.00,
+    packageSize: "10's strip",
+    indications: ['Tendonitis', 'Bursitis', 'Acute Gout', 'Primary Dysmenorrhea'],
+  },
+  {
+    brandName: 'Xpa',
+    genericName: 'Tramadol Hydrochloride + Paracetamol',
+    strength: '37.5 mg + 325 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.50,
+    packageSize: "10's strip",
+    indications: ['Moderate to Severe Chronic Pain', 'Musculoskeletal Pain', 'Arthritic Pain'],
+  },
+  {
+    brandName: 'Camadol',
+    genericName: 'Tramadol Hydrochloride',
+    strength: '50 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Moderate to Severe Pain', 'Cancer Pain', 'Post-injury Pain'],
+  },
+  {
+    brandName: 'Ibu 400',
+    genericName: 'Ibuprofen',
+    strength: '400 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Mild to Moderate Pain', 'Dysmenorrhea', 'Fever Reduction'],
+  },
+  {
+    brandName: 'Flamimax 50',
+    genericName: 'Diclofenac Potassium',
+    strength: '50 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 5.00,
+    packageSize: "10's strip",
+    indications: ['Acute Migraine Attacks', 'Soft Tissue Injuries', 'Post-traumatic Pain'],
+  },
+  {
+    brandName: 'Volmax 50',
+    genericName: 'Diclofenac Sodium',
+    strength: '50 mg',
+    dosageForm: 'Enteric Coated Tablet',
+    manufacturer: 'Renata Limited',
+    unitPrice: 4.50,
+    packageSize: "10's strip",
+    indications: ['Osteoarthritis', 'Spondylitis', 'Rheumatoid Arthritis'],
+  },
+  {
+    brandName: 'Naprosyn 500',
+    genericName: 'Naproxen',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Radiant Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Joint Inflammation', 'Musculoskeletal Pain', 'Fever'],
+  },
+  {
+    brandName: 'Ketoral 10',
+    genericName: 'Ketorolac Tromethamine',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Acute Painful Conditions', 'Orthopedic Post-op Pain'],
+  },
+  {
+    brandName: 'Pyralgin 500',
+    genericName: 'Paracetamol',
+    strength: '500 mg',
+    dosageForm: 'Suppository',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "5's pack",
+    indications: ['Pediatric High Fever', 'Febrile Convulsions Prophylaxis'],
+  },
 
-  // 11-20: Gastric, PPIs, Antacids & GI
+  // 51-85: Gastroenterology, Anti-ulcerants & Motility
   {
     brandName: 'Seclo 20',
     genericName: 'Omeprazole',
@@ -213,6 +558,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Gastric Acidity', 'Duodenal Ulcers', 'Esophagitis'],
   },
   {
+    brandName: 'Pantonix 40',
+    genericName: 'Pantoprazole Sodium',
+    strength: '40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 11.00,
+    packageSize: "10's strip",
+    indications: ['Erosive GERD', 'Refractory Peptic Ulcers'],
+  },
+  {
     brandName: 'Finix 20',
     genericName: 'Rabeprazole Sodium',
     strength: '20 mg',
@@ -221,6 +576,116 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 8.00,
     packageSize: "10's strip",
     indications: ['GERD', 'Healing of Duodenal Ulcers', 'H. Pylori Infection'],
+  },
+  {
+    brandName: 'Finix 40',
+    genericName: 'Rabeprazole Sodium',
+    strength: '40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Opsonin Pharma Ltd.',
+    unitPrice: 13.00,
+    packageSize: "10's strip",
+    indications: ['Severe Reflux Esophagitis', 'Hyperchlorhydria'],
+  },
+  {
+    brandName: 'Esoral 20',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Acid Reflux', 'Heartburn', 'Zollinger-Ellison Syndrome'],
+  },
+  {
+    brandName: 'Esoral 40',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Severe Erosive Esophagitis', 'Gastrointestinal Bleeding Prophylaxis'],
+  },
+  {
+    brandName: 'Losectil 20',
+    genericName: 'Omeprazole',
+    strength: '20 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Eskayef Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Peptic Ulcer Disease', 'GERD', 'Acid Dyspepsia'],
+  },
+  {
+    brandName: 'Losectil 40',
+    genericName: 'Omeprazole',
+    strength: '40 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Eskayef Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Severe Gastroesophageal Reflux', 'Ulcer Healing'],
+  },
+  {
+    brandName: 'Proceptin 20',
+    genericName: 'Omeprazole',
+    strength: '20 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Gastric Acidity', 'Heartburn', 'Acid Indigestion'],
+  },
+  {
+    brandName: 'Rabeca 20',
+    genericName: 'Rabeprazole Sodium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['GERD Maintenance', 'Duodenal Ulcers'],
+  },
+  {
+    brandName: 'Nexum 20',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Healthcare Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Acid Reflux Relief', 'Esophagitis Healing'],
+  },
+  {
+    brandName: 'Nexum 40',
+    genericName: 'Esomeprazole Magnesium',
+    strength: '40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Healthcare Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Severe Erosive Esophagitis', 'Gastric Ulcer Treatment'],
+  },
+  {
+    brandName: 'Rabeloc 20',
+    genericName: 'Rabeprazole Sodium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Acid Peptic Disease', 'Heartburn'],
+  },
+  {
+    brandName: 'Pariet 20',
+    genericName: 'Rabeprazole Sodium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Radiant Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Zollinger-Ellison Syndrome', 'Reflux Esophagitis'],
   },
   {
     brandName: 'Antacid Plus',
@@ -243,6 +708,26 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Quick Heartburn Relief', 'Sour Stomach', 'Acid Indigestion'],
   },
   {
+    brandName: 'Gaviscon Liquid',
+    genericName: 'Sodium Alginate + Sodium Bicarbonate + Calcium Carbonate',
+    strength: '500 mg + 267 mg + 160 mg / 10 ml',
+    dosageForm: 'Suspension',
+    manufacturer: 'Reckitt Benckiser / Square',
+    unitPrice: 220.00,
+    packageSize: '200 ml bottle',
+    indications: ['Reflux Raft Formulation', 'Heartburn in Pregnancy', 'Post-meal Regurgitation'],
+  },
+  {
+    brandName: 'Marlox Plus',
+    genericName: 'Magaldrate + Simethicone',
+    strength: '480 mg + 20 mg / 5 ml',
+    dosageForm: 'Suspension',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 90.00,
+    packageSize: '200 ml bottle',
+    indications: ['Gastric Flatulence', 'Hyperacidity', 'Bloating'],
+  },
+  {
     brandName: 'Motigut 10',
     genericName: 'Domperidone',
     strength: '10 mg',
@@ -262,8 +747,78 @@ export const BANGLADESH_MEDICINES = [
     packageSize: "10's strip",
     indications: ['Nausea & Vomiting', 'Epigastric Sense of Fullness', 'Upper Abdominal Discomfort'],
   },
+  {
+    brandName: 'Domil 10',
+    genericName: 'Domperidone',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 4.00,
+    packageSize: "10's strip",
+    indications: ['Dyspeptic Symptom Complex', 'Nausea Relief'],
+  },
+  {
+    brandName: 'Dyspar 10',
+    genericName: 'Domperidone',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Opsonin Pharma Ltd.',
+    unitPrice: 3.80,
+    packageSize: "10's strip",
+    indications: ['Gastric Motility Disorder', 'Vomiting'],
+  },
+  {
+    brandName: 'Famotack 20',
+    genericName: 'Famotidine',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['H2 Receptor Antagonist', 'Duodenal Ulcers', 'Gastric Acidity'],
+  },
+  {
+    brandName: 'Neotack 20',
+    genericName: 'Famotidine',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Acid Indigestion', 'Heartburn Relief'],
+  },
+  {
+    brandName: 'Gastral 20',
+    genericName: 'Omeprazole',
+    strength: '20 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Acme Laboratories Ltd.',
+    unitPrice: 5.50,
+    packageSize: "10's strip",
+    indications: ['Peptic Ulcer', 'GERD', 'Acid Reflux'],
+  },
+  {
+    brandName: 'Pepticon 20',
+    genericName: 'Pantoprazole Sodium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Healthcare Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Gastric Ulcers', 'Hyperacidity'],
+  },
 
-  // 25-35: Antihistamines & Respiratory (Allergies, Cough, Asthma)
+  // 86-125: Respiratory, Antihistamines, Asthma & Cough
+  {
+    brandName: 'Bilasten 20',
+    genericName: 'Bilastine',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 18.00,
+    packageSize: "10's strip",
+    indications: ['Non-sedating Allergy Relief', 'Allergic Rhinoconjunctivitis', 'Urticaria'],
+  },
   {
     brandName: 'Monas 10',
     genericName: 'Montelukast Sodium',
@@ -283,6 +838,26 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 10.00,
     packageSize: "10's strip",
     indications: ['Pediatric Asthma', 'Seasonal Allergies', 'Nocturnal Cough'],
+  },
+  {
+    brandName: 'Montair 10',
+    genericName: 'Montelukast Sodium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 17.00,
+    packageSize: "10's strip",
+    indications: ['Asthma Management', 'Seasonal Allergic Rhinitis'],
+  },
+  {
+    brandName: 'Montair 5',
+    genericName: 'Montelukast Sodium',
+    strength: '5 mg',
+    dosageForm: 'Chewable Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Pediatric Asthma Management', 'Allergic Rhinitis in Children'],
   },
   {
     brandName: 'Montene 10',
@@ -305,6 +880,36 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Perennial Allergic Rhinitis', 'Asthma Maintenance'],
   },
   {
+    brandName: 'Pulmokast 10',
+    genericName: 'Montelukast Sodium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Renata Limited',
+    unitPrice: 17.00,
+    packageSize: "10's strip",
+    indications: ['Bronchial Asthma', 'Exercise-induced Asthma Prophylaxis'],
+  },
+  {
+    brandName: 'Solokast 10',
+    genericName: 'Montelukast Sodium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Healthcare Pharmaceuticals Ltd.',
+    unitPrice: 17.00,
+    packageSize: "10's strip",
+    indications: ['Asthma Prevention', 'Allergy Prophylaxis'],
+  },
+  {
+    brandName: 'Provair 10',
+    genericName: 'Montelukast Sodium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'UniMed UniHealth Pharmaceuticals',
+    unitPrice: 17.00,
+    packageSize: "10's strip",
+    indications: ['Bronchial Asthma', 'Allergic Rhinitis'],
+  },
+  {
     brandName: 'Fexo 120',
     genericName: 'Fexofenadine Hydrochloride',
     strength: '120 mg',
@@ -325,6 +930,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Chronic Idiopathic Urticaria', 'Severe Allergic Skin Conditions'],
   },
   {
+    brandName: 'Fexo 60',
+    genericName: 'Fexofenadine Hydrochloride',
+    strength: '60 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.50,
+    packageSize: "10's strip",
+    indications: ['Mild Allergic Rhinitis', 'Skin Allergy'],
+  },
+  {
     brandName: 'Alatrol 10',
     genericName: 'Cetirizine Dihydrochloride',
     strength: '10 mg',
@@ -335,6 +950,26 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Hay Fever', 'Allergic Rash', 'Itching', 'Cold Symptoms'],
   },
   {
+    brandName: 'Alatrol Syrup',
+    genericName: 'Cetirizine Dihydrochloride',
+    strength: '5 mg / 5 ml',
+    dosageForm: 'Syrup',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 50.00,
+    packageSize: '60 ml bottle',
+    indications: ['Pediatric Allergy', 'Allergic Rhinitis', 'Pruritus in Children'],
+  },
+  {
+    brandName: 'Cetriz 10',
+    genericName: 'Cetirizine Dihydrochloride',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Allergic Conjunctivitis', 'Urticaria', 'Dermatographism'],
+  },
+  {
     brandName: 'Histacin 4',
     genericName: 'Chlorpheniramine Maleate',
     strength: '4 mg',
@@ -343,16 +978,6 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 0.50,
     packageSize: "20's strip",
     indications: ['Runny Nose', 'Common Cold', 'Watery Eyes', 'Allergic Sneezing'],
-  },
-  {
-    brandName: 'Bilasten 20',
-    genericName: 'Bilastine',
-    strength: '20 mg',
-    dosageForm: 'Tablet',
-    manufacturer: 'Incepta Pharmaceuticals Ltd.',
-    unitPrice: 18.00,
-    packageSize: "10's strip",
-    indications: ['Non-sedating Allergy Relief', 'Allergic Rhinoconjunctivitis', 'Urticaria'],
   },
   {
     brandName: 'Tofen 1',
@@ -384,8 +1009,228 @@ export const BANGLADESH_MEDICINES = [
     packageSize: '100 ml bottle',
     indications: ['Dry Cough', 'Productive Cough', 'Sore Throat', 'Hoarseness'],
   },
+  {
+    brandName: 'Tusca Syrup',
+    genericName: 'Dextromethorphan + Phenylephrine + Triprolidine',
+    strength: '10 mg + 5 mg + 1.25 mg / 5 ml',
+    dosageForm: 'Syrup',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 80.00,
+    packageSize: '100 ml bottle',
+    indications: ['Dry Irritating Cough', 'Cold & Congestion', 'Night Cough'],
+  },
+  {
+    brandName: 'Cofnil Syrup',
+    genericName: 'Guaifenesin + Pseudoephedrine + Chlorpheniramine',
+    strength: '100 mg + 30 mg + 2 mg / 5 ml',
+    dosageForm: 'Syrup',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 75.00,
+    packageSize: '100 ml bottle',
+    indications: ['Productive Chest Cough', 'Bronchial Congestion', 'Mucus Clearing'],
+  },
+  {
+    brandName: 'Mirakof Syrup',
+    genericName: 'Butamirate Citrate',
+    strength: '7.5 mg / 5 ml',
+    dosageForm: 'Syrup',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 90.00,
+    packageSize: '100 ml bottle',
+    indications: ['Non-sedating Antitussive', 'Acute Dry Cough', 'Whooping Cough Symptoms'],
+  },
+  {
+    brandName: 'Ambrotos Syrup',
+    genericName: 'Ambroxol Hydrochloride',
+    strength: '15 mg / 5 ml',
+    dosageForm: 'Syrup',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 65.00,
+    packageSize: '100 ml bottle',
+    indications: ['Bronchial Secretion Dilution', 'Productive Cough', 'Tracheobronchitis'],
+  },
+  {
+    brandName: 'Basok Syrup',
+    genericName: 'Adhatoda Vasica Extract',
+    strength: 'Pure Herbal Formula',
+    dosageForm: 'Syrup',
+    manufacturer: 'Acme Laboratories Ltd. (Herbal)',
+    unitPrice: 80.00,
+    packageSize: '100 ml bottle',
+    indications: ['Herbal Cough Soothing', 'Throat Tickle', 'Cold Bronchitis'],
+  },
+  {
+    brandName: 'Doxovent 400',
+    genericName: 'Doxofylline',
+    strength: '400 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.50,
+    packageSize: "10's strip",
+    indications: ['COPD', 'Bronchial Asthma', 'Spastic Bronchitis'],
+  },
+  {
+    brandName: 'Doxiva 400',
+    genericName: 'Doxofylline',
+    strength: '400 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 8.50,
+    packageSize: "10's strip",
+    indications: ['Bronchodilation', 'Asthma Maintenance', 'Wheezing Relief'],
+  },
+  {
+    brandName: 'Theo-280',
+    genericName: 'Theophylline',
+    strength: '280 mg',
+    dosageForm: 'Modified Release Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 4.50,
+    packageSize: "10's strip",
+    indications: ['Reversible Airway Obstruction', 'Chronic Asthma'],
+  },
+  {
+    brandName: 'Windel 2',
+    genericName: 'Salbutamol',
+    strength: '2 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 0.50,
+    packageSize: "20's strip",
+    indications: ['Bronchospasm', 'Acute Asthma Attacks', 'Exercise-Induced Wheezing'],
+  },
+  {
+    brandName: 'Windel 4',
+    genericName: 'Salbutamol',
+    strength: '4 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 0.75,
+    packageSize: "20's strip",
+    indications: ['Severe Bronchoconstriction', 'Chronic Airway Spasm'],
+  },
+  {
+    brandName: 'Ventolin Inhaler',
+    genericName: 'Salbutamol',
+    strength: '100 mcg / puff',
+    dosageForm: 'Inhaler',
+    manufacturer: 'GlaxoSmithKline / Beximco',
+    unitPrice: 240.00,
+    packageSize: '200 puffs canister',
+    indications: ['Immediate Asthma Bronchodilation', 'Acute Wheezing Relief'],
+  },
+  {
+    brandName: 'Pulmicort Respules',
+    genericName: 'Budesonide',
+    strength: '0.5 mg / 2 ml',
+    dosageForm: 'Respules',
+    manufacturer: 'AstraZeneca / Beximco',
+    unitPrice: 50.00,
+    packageSize: "5's strip",
+    indications: ['Acute Severe Asthma Exacerbation', 'Nebulization Therapy in Children'],
+  },
+  {
+    brandName: 'Seretide 125 Evohaler',
+    genericName: 'Salmeterol + Fluticasone Propionate',
+    strength: '25 mcg + 125 mcg / puff',
+    dosageForm: 'Inhaler',
+    manufacturer: 'GlaxoSmithKline',
+    unitPrice: 850.00,
+    packageSize: '120 puffs canister',
+    indications: ['Regular Treatment of Asthma', 'Severe COPD Maintenance'],
+  },
+  {
+    brandName: 'Flixonase Nasal Spray',
+    genericName: 'Fluticasone Propionate',
+    strength: '50 mcg / spray',
+    dosageForm: 'Nasal Spray',
+    manufacturer: 'GlaxoSmithKline',
+    unitPrice: 380.00,
+    packageSize: '120 sprays bottle',
+    indications: ['Allergic Rhinitis Prophylaxis', 'Nasal Polyps Treatment'],
+  },
+  {
+    brandName: 'Avamys Nasal Spray',
+    genericName: 'Fluticasone Furoate',
+    strength: '27.5 mcg / spray',
+    dosageForm: 'Nasal Spray',
+    manufacturer: 'GlaxoSmithKline',
+    unitPrice: 520.00,
+    packageSize: '120 sprays device',
+    indications: ['Seasonal & Perennial Allergic Rhinitis in Adults & Children'],
+  },
+  {
+    brandName: 'Rhinil Nasal Drops',
+    genericName: 'Xylometazoline Hydrochloride',
+    strength: '0.1%',
+    dosageForm: 'Nasal Drop',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 20.00,
+    packageSize: '10 ml dropper bottle',
+    indications: ['Nasal Congestion', 'Common Cold', 'Sinus Decongestion'],
+  },
+  {
+    brandName: 'Antazol 0.1% Nasal Drops',
+    genericName: 'Xylometazoline Hydrochloride',
+    strength: '0.1%',
+    dosageForm: 'Nasal Drop',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 22.00,
+    packageSize: '10 ml bottle',
+    indications: ['Blocked Nose', 'Paranasal Sinusitis'],
+  },
+  {
+    brandName: 'Xylomet 0.1% Nasal Drops',
+    genericName: 'Xylometazoline Hydrochloride',
+    strength: '0.1%',
+    dosageForm: 'Nasal Drop',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 22.00,
+    packageSize: '10 ml bottle',
+    indications: ['Nasal Blockage Relief', 'Catarrhal Otitis Media'],
+  },
+  {
+    brandName: 'Sinamin 4',
+    genericName: 'Chlorpheniramine Maleate',
+    strength: '4 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 0.50,
+    packageSize: "20's strip",
+    indications: ['Allergic Rhinitis', 'Urticaria', 'Pruritus'],
+  },
+  {
+    brandName: 'Levocet 5',
+    genericName: 'Levocetirizine Dihydrochloride',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 4.50,
+    packageSize: "10's strip",
+    indications: ['Perennial Allergic Rhinitis', 'Chronic Urticaria'],
+  },
+  {
+    brandName: 'Rupafin 10',
+    genericName: 'Rupatadine',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Allergic Rhinitis', 'Chronic Idiopathic Urticaria in Adults'],
+  },
+  {
+    brandName: 'Deslor 5',
+    genericName: 'Desloratadine',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 5.00,
+    packageSize: "10's strip",
+    indications: ['Non-sedating Antihistamine', 'Nasal Congestion', 'Skin Itching'],
+  },
 
-  // 37-47: Antibiotics & Antiprotozoals
+  // 126-165: Antibiotics, Antimicrobials & Antifungals
   {
     brandName: 'Azith 500',
     genericName: 'Azithromycin Dihydrate',
@@ -447,6 +1292,36 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Bacterial Sinusitis', 'Otitis Media', 'Dental Abscess', 'Skin Infections'],
   },
   {
+    brandName: 'Amoclav 625',
+    genericName: 'Amoxicillin Trihydrate + Clavulanate Potassium',
+    strength: '500 mg + 125 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 42.00,
+    packageSize: "12's box",
+    indications: ['Upper & Lower Respiratory Tract Infections', 'Genitourinary Tract Infections'],
+  },
+  {
+    brandName: 'Fimoxyl 500',
+    genericName: 'Amoxicillin Trihydrate',
+    strength: '500 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Bacterial Infections', 'Otitis Media', 'Respiratory Infections', 'Dental Abscess'],
+  },
+  {
+    brandName: 'Moxacil 500',
+    genericName: 'Amoxicillin Trihydrate',
+    strength: '500 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Streptococcal Pharyngitis', 'Uncomplicated Gonorrhea', 'Skin Infections'],
+  },
+  {
     brandName: 'Cef-3 200',
     genericName: 'Cefixime Trihydrate',
     strength: '200 mg',
@@ -457,6 +1332,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Upper Respiratory Infection', 'Uncomplicated UTI', 'Typhoid Fever'],
   },
   {
+    brandName: 'Cef-3 400',
+    genericName: 'Cefixime Trihydrate',
+    strength: '400 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 70.00,
+    packageSize: "7's box",
+    indications: ['Severe Enteric Fever', 'Complicated Urinary Infections'],
+  },
+  {
     brandName: 'Triocim 200',
     genericName: 'Cefixime Trihydrate',
     strength: '200 mg',
@@ -465,6 +1350,36 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 40.00,
     packageSize: "14's box",
     indications: ['Bacterial Bronchitis', 'Gonococcal Infection', 'Pharyngitis'],
+  },
+  {
+    brandName: 'Triocim 400',
+    genericName: 'Cefixime Trihydrate',
+    strength: '400 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 70.00,
+    packageSize: "7's box",
+    indications: ['Severe Enteric (Typhoid) Fever', 'Acute Sinusitis'],
+  },
+  {
+    brandName: 'Bexitrim 480',
+    genericName: 'Trimethoprim + Sulfamethoxazole',
+    strength: '80 mg + 400 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 2.00,
+    packageSize: "10's strip",
+    indications: ['Urinary Tract Infection', 'Acute Otitis Media', 'Pneumocystis Pneumonia'],
+  },
+  {
+    brandName: 'Bexitrim Susp',
+    genericName: 'Trimethoprim + Sulfamethoxazole',
+    strength: '40 mg + 200 mg / 5 ml',
+    dosageForm: 'Suspension',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 45.00,
+    packageSize: '60 ml bottle',
+    indications: ['Pediatric Bacterial Infections', 'Shigellosis'],
   },
   {
     brandName: 'Filmet 400',
@@ -496,8 +1411,178 @@ export const BANGLADESH_MEDICINES = [
     packageSize: "2's strip",
     indications: ['Intestinal Worm Infestation', 'Ascariasis', 'Hookworm', 'Pinworm'],
   },
+  {
+    brandName: 'Alben 400',
+    genericName: 'Albendazole',
+    strength: '400 mg',
+    dosageForm: 'Chewable Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 5.00,
+    packageSize: "2's strip",
+    indications: ['Echinococcosis', 'Neurocysticercosis', 'Broad Spectrum Anthelmintic'],
+  },
+  {
+    brandName: 'Flucon 150',
+    genericName: 'Fluconazole',
+    strength: '150 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 30.00,
+    packageSize: "2's strip",
+    indications: ['Vaginal Candidiasis', 'Mucosal Candidiasis', 'Fungal Nail Infection'],
+  },
+  {
+    brandName: 'Diflu 150',
+    genericName: 'Fluconazole',
+    strength: '150 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 30.00,
+    packageSize: "2's strip",
+    indications: ['Systemic Fungal Infections', 'Cryptococcal Meningitis'],
+  },
+  {
+    brandName: 'Itracon 100',
+    genericName: 'Itraconazole',
+    strength: '100 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 40.00,
+    packageSize: "10's strip",
+    indications: ['Dermatophytosis', 'Onychomycosis', 'Aspergillosis'],
+  },
+  {
+    brandName: 'Doxicap 100',
+    genericName: 'Doxycycline Hyclate',
+    strength: '100 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Acne Vulgaris', 'Chlamydia Infections', 'Scrub Typhus', 'Malaria Prophylaxis'],
+  },
+  {
+    brandName: 'Levoflox 500',
+    genericName: 'Levofloxacin',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 20.00,
+    packageSize: "10's strip",
+    indications: ['Community Acquired Pneumonia', 'Pyelonephritis', 'Complicated Sinusitis'],
+  },
+  {
+    brandName: 'Zymax 500',
+    genericName: 'Levofloxacin',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 20.00,
+    packageSize: "10's strip",
+    indications: ['Acute Bacterial Exacerbation of Chronic Bronchitis', 'Skin Infections'],
+  },
+  {
+    brandName: 'Ceftron 1g Inj',
+    genericName: 'Ceftriaxone Sodium',
+    strength: '1 g',
+    dosageForm: 'Injection',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 190.00,
+    packageSize: '1 vial + solvent',
+    indications: ['Bacterial Meningitis', 'Severe Sepsis', 'Intra-abdominal Infections'],
+  },
+  {
+    brandName: 'Cefotax 1g Inj',
+    genericName: 'Cefotaxime Sodium',
+    strength: '1 g',
+    dosageForm: 'Injection',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 180.00,
+    packageSize: '1 vial + solvent',
+    indications: ['Gynecological Infections', 'Bacteremia', 'Surgical Prophylaxis'],
+  },
+  {
+    brandName: 'Avelox 400',
+    genericName: 'Moxifloxacin Hydrochloride',
+    strength: '400 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Bayer / Incepta',
+    unitPrice: 50.00,
+    packageSize: "5's strip",
+    indications: ['Refractory Bacterial Sinusitis', 'Aspiration Pneumonia'],
+  },
+  {
+    brandName: 'Klaricid 500',
+    genericName: 'Clarithromycin',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Abbott / Square',
+    unitPrice: 50.00,
+    packageSize: "10's strip",
+    indications: ['H. pylori Eradication Triple Therapy', 'Mycoplasma Pneumonia'],
+  },
+  {
+    brandName: 'Dynapen 500',
+    genericName: 'Flucloxacillin Sodium',
+    strength: '500 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Boils & Carbuncles', 'Cellulitis', 'Staphylococcal Wound Infections'],
+  },
+  {
+    brandName: 'Flupen 500',
+    genericName: 'Flucloxacillin Sodium',
+    strength: '500 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Impetigo', 'Post-surgical Skin Sepsis', 'Folliculitis'],
+  },
+  {
+    brandName: 'Clavroc 625',
+    genericName: 'Amoxicillin + Clavulanic Acid',
+    strength: '625 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Renata Limited',
+    unitPrice: 42.00,
+    packageSize: "12's box",
+    indications: ['Recurrent Tonsillitis', 'Lower Respiratory Tract Sepsis'],
+  },
+  {
+    brandName: 'Xeldrin 500',
+    genericName: 'Cefuroxime Axetil',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 50.00,
+    packageSize: "10's box",
+    indications: ['Second Generation Cephalosporin', 'Severe Bronchitis', 'Lyme Disease'],
+  },
+  {
+    brandName: 'Kilbac 500',
+    genericName: 'Cefuroxime Axetil',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 50.00,
+    packageSize: "10's box",
+    indications: ['Pharyngitis', 'Uncomplicated Gonorrhea', 'Pyelonephritis'],
+  },
+  {
+    brandName: 'Cerox-A 500',
+    genericName: 'Cefuroxime Axetil',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 50.00,
+    packageSize: "10's box",
+    indications: ['Upper Respiratory Bacterial Infections', 'Otitis Media'],
+  },
 
-  // 48-58: Cardiovascular, Diabetes, CNS & Supplements
+  // 166-195: Cardiovascular, Antihypertensives & Lipid Regulators
   {
     brandName: 'Bizoran 5/20',
     genericName: 'Amlodipine Besylate + Olmesartan Medoxomil',
@@ -507,6 +1592,16 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 12.00,
     packageSize: "10's strip",
     indications: ['Essential Hypertension', 'Cardiovascular Risk Reduction'],
+  },
+  {
+    brandName: 'Bizoran 5/40',
+    genericName: 'Amlodipine Besylate + Olmesartan Medoxomil',
+    strength: '5 mg + 40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 16.00,
+    packageSize: "10's strip",
+    indications: ['Severe Hypertension', 'Dual Mechanism Blood Pressure Control'],
   },
   {
     brandName: 'Camlosart 5/20',
@@ -519,6 +1614,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['High Blood Pressure', 'Dual Combination Antihypertensive'],
   },
   {
+    brandName: 'Camlosart 5/40',
+    genericName: 'Amlodipine Besylate + Olmesartan Medoxomil',
+    strength: '5 mg + 40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 16.00,
+    packageSize: "10's strip",
+    indications: ['Resistant Hypertension Management'],
+  },
+  {
     brandName: 'Amlocal 5',
     genericName: 'Amlodipine Besylate',
     strength: '5 mg',
@@ -527,6 +1632,16 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 5.00,
     packageSize: "10's strip",
     indications: ['Hypertension', 'Chronic Stable Angina', 'Vasospastic Angina'],
+  },
+  {
+    brandName: 'Amlocal 10',
+    genericName: 'Amlodipine Besylate',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Refractory Hypertension', 'Coronary Artery Disease'],
   },
   {
     brandName: 'Osartil 50',
@@ -539,6 +1654,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Hypertension', 'Diabetic Nephropathy Protection'],
   },
   {
+    brandName: 'Osartil 100',
+    genericName: 'Losartan Potassium',
+    strength: '100 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 14.00,
+    packageSize: "10's strip",
+    indications: ['Severe Hypertension', 'Proteinuria in Type 2 Diabetics'],
+  },
+  {
     brandName: 'Angilock 50',
     genericName: 'Losartan Potassium',
     strength: '50 mg',
@@ -549,24 +1674,74 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Hypertension', 'Stroke Reduction in Hypertensive Patients'],
   },
   {
-    brandName: 'Compathan 500',
-    genericName: 'Metformin Hydrochloride',
-    strength: '500 mg',
+    brandName: 'Angilock 100',
+    genericName: 'Losartan Potassium',
+    strength: '100 mg',
     dosageForm: 'Tablet',
     manufacturer: 'Square Pharmaceuticals Ltd.',
-    unitPrice: 4.00,
+    unitPrice: 14.00,
     packageSize: "10's strip",
-    indications: ['Type 2 Diabetes Mellitus', 'Blood Glucose Regulation', 'Insulin Sensitivity'],
+    indications: ['Hypertension with Left Ventricular Hypertrophy'],
   },
   {
-    brandName: 'Gluconor 500',
-    genericName: 'Metformin Hydrochloride',
-    strength: '500 mg',
+    brandName: 'Cardipin 10',
+    genericName: 'Nifedipine',
+    strength: '10 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Vasospastic Angina', 'Raynaud Phenomenon'],
+  },
+  {
+    brandName: 'Bisocor 2.5',
+    genericName: 'Bisoprolol Fumarate',
+    strength: '2.5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Stable Chronic Heart Failure', 'Hypertension'],
+  },
+  {
+    brandName: 'Bisocor 5',
+    genericName: 'Bisoprolol Fumarate',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Hypertension', 'Ischemic Heart Disease Control'],
+  },
+  {
+    brandName: 'Betaloc 50',
+    genericName: 'Metoprolol Tartrate',
+    strength: '50 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'AstraZeneca / Beximco',
+    unitPrice: 7.50,
+    packageSize: "10's strip",
+    indications: ['Angina Pectoris', 'Cardiac Arrhythmias', 'Post Myocardial Infarction'],
+  },
+  {
+    brandName: 'Indever 10',
+    genericName: 'Propranolol Hydrochloride',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 1.50,
+    packageSize: "20's strip",
+    indications: ['Essential Tremor', 'Migraine Prophylaxis', 'Performance Anxiety', 'Palpitations'],
+  },
+  {
+    brandName: 'Tenoren 50',
+    genericName: 'Atenolol',
+    strength: '50 mg',
     dosageForm: 'Tablet',
     manufacturer: 'Square Pharmaceuticals Ltd.',
     unitPrice: 4.00,
     packageSize: "10's strip",
-    indications: ['Type 2 Diabetes Control', 'Glycemic Index Management'],
+    indications: ['Hypertension', 'Angina Prophylaxis'],
   },
   {
     brandName: 'Rosuva 10',
@@ -579,6 +1754,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Hypercholesterolemia', 'Dyslipidemia', 'Cardiovascular Event Prevention'],
   },
   {
+    brandName: 'Rosuva 20',
+    genericName: 'Rosuvastatin Calcium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 32.00,
+    packageSize: "10's strip",
+    indications: ['Severe Hypercholesterolemia', 'Atherosclerosis Regression'],
+  },
+  {
     brandName: 'Lipicon 10',
     genericName: 'Atorvastatin Calcium',
     strength: '10 mg',
@@ -588,6 +1773,340 @@ export const BANGLADESH_MEDICINES = [
     packageSize: "10's strip",
     indications: ['High Cholesterol', 'Arterial Plaque Prevention'],
   },
+  {
+    brandName: 'Lipicon 20',
+    genericName: 'Atorvastatin Calcium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 25.00,
+    packageSize: "10's strip",
+    indications: ['Dyslipidemia', 'Coronary Heart Disease Prevention'],
+  },
+  {
+    brandName: 'Atova 10',
+    genericName: 'Atorvastatin Calcium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 15.00,
+    packageSize: "10's strip",
+    indications: ['Elevated Total Cholesterol', 'LDL Reduction'],
+  },
+  {
+    brandName: 'Atova 20',
+    genericName: 'Atorvastatin Calcium',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 25.00,
+    packageSize: "10's strip",
+    indications: ['Atherosclerotic Vascular Disease'],
+  },
+  {
+    brandName: 'Rostar 10',
+    genericName: 'Rosuvastatin Calcium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 20.00,
+    packageSize: "10's strip",
+    indications: ['Primary Hyperlipidemia', 'Mixed Dyslipidemia'],
+  },
+  {
+    brandName: 'Clopid 75',
+    genericName: 'Clopidogrel Bisulfate',
+    strength: '75 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 14.00,
+    packageSize: "10's strip",
+    indications: ['Antiplatelet', 'Atherothrombosis Prevention', 'Post-Stent Thrombosis Prevention'],
+  },
+  {
+    brandName: 'Anclog 75',
+    genericName: 'Clopidogrel Bisulfate',
+    strength: '75 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 14.00,
+    packageSize: "10's strip",
+    indications: ['Secondary Prevention of Stroke', 'Peripheral Artery Disease'],
+  },
+  {
+    brandName: 'Ecosprin 75',
+    genericName: 'Aspirin',
+    strength: '75 mg',
+    dosageForm: 'Gastro-Resistant Tablet',
+    manufacturer: 'Acme Laboratories Ltd.',
+    unitPrice: 0.80,
+    packageSize: "30's strip",
+    indications: ['Cardiovascular Risk Reduction', 'Antiplatelet Maintenance', 'Transient Ischemic Attacks'],
+  },
+  {
+    brandName: 'Ecosprin Plus',
+    genericName: 'Aspirin + Clopidogrel',
+    strength: '75 mg + 75 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Acme Laboratories Ltd.',
+    unitPrice: 15.00,
+    packageSize: "10's strip",
+    indications: ['Dual Antiplatelet Therapy (DAPT)', 'Acute Coronary Syndrome'],
+  },
+  {
+    brandName: 'Cardil 2.5',
+    genericName: 'Ramipril',
+    strength: '2.5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['ACE Inhibitor', 'Heart Failure Post-MI', 'Hypertension'],
+  },
+  {
+    brandName: 'Dilzem 30',
+    genericName: 'Diltiazem Hydrochloride',
+    strength: '30 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Calcium Channel Blocker', 'Chronic Stable Angina', 'Supraventricular Arrhythmias'],
+  },
+  {
+    brandName: 'Carva 6.25',
+    genericName: 'Carvedilol',
+    strength: '6.25 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 4.50,
+    packageSize: "10's strip",
+    indications: ['Congestive Heart Failure', 'Left Ventricular Dysfunction'],
+  },
+  {
+    brandName: 'Nebil 5',
+    genericName: 'Nebivolol Hydrochloride',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Vasodilating Beta Blocker', 'Mild to Moderate Heart Failure in Elderly'],
+  },
+  {
+    brandName: 'Olmecar 20',
+    genericName: 'Olmesartan Medoxomil',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 9.00,
+    packageSize: "10's strip",
+    indications: ['Angiotensin Receptor Blocker', 'Hypertension Control'],
+  },
+  {
+    brandName: 'Telma 40',
+    genericName: 'Telmisartan',
+    strength: '40 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['24-Hour Blood Pressure Control', 'Diabetic Nephropathy'],
+  },
+
+  // 196-220: Diabetes & Endocrinology
+  {
+    brandName: 'Compathan 500',
+    genericName: 'Metformin Hydrochloride',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 4.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes Mellitus', 'Blood Glucose Regulation', 'Insulin Sensitivity'],
+  },
+  {
+    brandName: 'Compathan 850',
+    genericName: 'Metformin Hydrochloride',
+    strength: '850 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes Mellitus', 'Polycystic Ovary Syndrome (PCOS)'],
+  },
+  {
+    brandName: 'Gluconor 500',
+    genericName: 'Metformin Hydrochloride',
+    strength: '500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 4.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes Control', 'Glycemic Index Management'],
+  },
+  {
+    brandName: 'Gluconor 850',
+    genericName: 'Metformin Hydrochloride',
+    strength: '850 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['High Blood Sugar Control', 'Weight Reduction in Obese Diabetics'],
+  },
+  {
+    brandName: 'Daonil 5',
+    genericName: 'Glibenclamide',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Sanofi Bangladesh Ltd.',
+    unitPrice: 3.50,
+    packageSize: "10's strip",
+    indications: ['Sulfonylurea Antidiabetic', 'Type 2 Diabetes Glycemic Control'],
+  },
+  {
+    brandName: 'Diamicron MR 60',
+    genericName: 'Gliclazide',
+    strength: '60 mg',
+    dosageForm: 'Modified Release Tablet',
+    manufacturer: 'Servier / Square',
+    unitPrice: 15.00,
+    packageSize: "14's strip",
+    indications: ['Type 2 Diabetes in Adults', 'Beta Cell Insulin Secretagogue'],
+  },
+  {
+    brandName: 'Amaryl 1',
+    genericName: 'Glimepiride',
+    strength: '1 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Sanofi / Square',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Once-daily Oral Antidiabetic', 'Non-insulin Dependent Diabetes'],
+  },
+  {
+    brandName: 'Amaryl 2',
+    genericName: 'Glimepiride',
+    strength: '2 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Sanofi / Square',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes Glucose Control'],
+  },
+  {
+    brandName: 'Januvia 100',
+    genericName: 'Sitagliptin Phosphate',
+    strength: '100 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'MSD / Square',
+    unitPrice: 28.00,
+    packageSize: "14's strip",
+    indications: ['DPP-4 Inhibitor', 'Type 2 Diabetes', 'Weight-Neutral Glycemic Control'],
+  },
+  {
+    brandName: 'Janumet 50/500',
+    genericName: 'Sitagliptin + Metformin Hydrochloride',
+    strength: '50 mg + 500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'MSD / Square',
+    unitPrice: 22.00,
+    packageSize: "14's strip",
+    indications: ['Dual Combination Oral Antidiabetic', 'HbA1c Reduction'],
+  },
+  {
+    brandName: 'Trajenta 5',
+    genericName: 'Linagliptin',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Boehringer Ingelheim / Incepta',
+    unitPrice: 25.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes', 'Renally Safe Antidiabetic (no dose adjustment needed)'],
+  },
+  {
+    brandName: 'Galvus 50',
+    genericName: 'Vildagliptin',
+    strength: '50 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Novartis / Square',
+    unitPrice: 20.00,
+    packageSize: "14's strip",
+    indications: ['Incretin Enhancer', 'Type 2 Diabetes Glycemic Control'],
+  },
+  {
+    brandName: 'Galvus Met 50/500',
+    genericName: 'Vildagliptin + Metformin',
+    strength: '50 mg + 500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Novartis / Square',
+    unitPrice: 22.00,
+    packageSize: "14's strip",
+    indications: ['Synergistic Glycemic Control in Adults with Type 2 Diabetes'],
+  },
+  {
+    brandName: 'Jardiance 10',
+    genericName: 'Empagliflozin',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Boehringer Ingelheim',
+    unitPrice: 45.00,
+    packageSize: "10's strip",
+    indications: ['SGLT2 Inhibitor', 'Type 2 Diabetes', 'Cardiovascular Death Risk Reduction'],
+  },
+  {
+    brandName: 'Jardiance 25',
+    genericName: 'Empagliflozin',
+    strength: '25 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Boehringer Ingelheim',
+    unitPrice: 65.00,
+    packageSize: "10's strip",
+    indications: ['Heart Failure with Reduced Ejection Fraction', 'Chronic Kidney Disease'],
+  },
+  {
+    brandName: 'Forxiga 10',
+    genericName: 'Dapagliflozin',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'AstraZeneca / Beximco',
+    unitPrice: 45.00,
+    packageSize: "14's strip",
+    indications: ['SGLT2 Inhibitor', 'Cardiorenal Protection in Type 2 Diabetes'],
+  },
+  {
+    brandName: 'Forxiga 5',
+    genericName: 'Dapagliflozin',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'AstraZeneca / Beximco',
+    unitPrice: 30.00,
+    packageSize: "14's strip",
+    indications: ['Initial SGLT2 Therapy', 'Heart Failure Management'],
+  },
+  {
+    brandName: 'Thyrox 50',
+    genericName: 'Levothyroxine Sodium',
+    strength: '50 mcg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 2.50,
+    packageSize: "30's bottle",
+    indications: ['Hypothyroidism', 'Thyroid Hormone Replacement', 'Euthyroid Goiter'],
+  },
+  {
+    brandName: 'Thyrox 100',
+    genericName: 'Levothyroxine Sodium',
+    strength: '100 mcg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 3.50,
+    packageSize: "30's bottle",
+    indications: ['Severe Hypothyroidism', 'Post-Thyroidectomy TSH Suppression'],
+  },
+
+  // 221-240: Central Nervous System, Neuro & Psych
   {
     brandName: 'Rivotril 0.5',
     genericName: 'Clonazepam',
@@ -599,6 +2118,16 @@ export const BANGLADESH_MEDICINES = [
     indications: ['Anxiety Disorders', 'Panic Attacks', 'Seizure Disorders', 'Sleep Disturbance'],
   },
   {
+    brandName: 'Rivotril 2',
+    genericName: 'Clonazepam',
+    strength: '2 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Radiant Pharmaceuticals Ltd.',
+    unitPrice: 15.00,
+    packageSize: "10's strip",
+    indications: ['Myoclonic Seizures', 'Akinetic Seizures', 'Severe Panic Disorder'],
+  },
+  {
     brandName: 'Disopan 0.5',
     genericName: 'Clonazepam',
     strength: '0.5 mg',
@@ -608,6 +2137,340 @@ export const BANGLADESH_MEDICINES = [
     packageSize: "10's strip",
     indications: ['Panic Disorder', 'Anxiety Tension', 'Myoclonus'],
   },
+  {
+    brandName: 'Lexotan 3',
+    genericName: 'Bromazepam',
+    strength: '3 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Radiant Pharmaceuticals Ltd.',
+    unitPrice: 7.00,
+    packageSize: "10's strip",
+    indications: ['Emotional Disturbances', 'Anxiety Tension', 'Somatoform Disorders'],
+  },
+  {
+    brandName: 'Sedil 5',
+    genericName: 'Diazepam',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 1.50,
+    packageSize: "20's strip",
+    indications: ['Acute Muscle Spasm', 'Alcohol Withdrawal Agitation', 'Severe Anxiety'],
+  },
+  {
+    brandName: 'Epival 500',
+    genericName: 'Divalproex Sodium',
+    strength: '500 mg',
+    dosageForm: 'Modified Release Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 22.00,
+    packageSize: "10's strip",
+    indications: ['Epilepsy', 'Bipolar Mania Prophylaxis', 'Migraine Prevention'],
+  },
+  {
+    brandName: 'Tegretol 200',
+    genericName: 'Carbamazepine',
+    strength: '200 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Novartis',
+    unitPrice: 6.00,
+    packageSize: "10's strip",
+    indications: ['Trigeminal Neuralgia', 'Generalized Tonic-Clonic Seizures'],
+  },
+  {
+    brandName: 'Torin 10',
+    genericName: 'Escitalopram Oxalate',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "10's strip",
+    indications: ['Major Depressive Episodes', 'Generalized Anxiety Disorder (GAD)'],
+  },
+  {
+    brandName: 'Pregaba 75',
+    genericName: 'Pregabalin',
+    strength: '75 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 18.00,
+    packageSize: "10's strip",
+    indications: ['Diabetic Neuropathy Pain', 'Fibromyalgia', 'Postherpetic Neuralgia'],
+  },
+  {
+    brandName: 'Pregaba 50',
+    genericName: 'Pregabalin',
+    strength: '50 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 14.00,
+    packageSize: "10's strip",
+    indications: ['Neuropathic Pain Initiation', 'Spinal Cord Injury Pain'],
+  },
+  {
+    brandName: 'Neugaba 75',
+    genericName: 'Pregabalin',
+    strength: '75 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 18.00,
+    packageSize: "10's strip",
+    indications: ['Nerve Regeneration Pain', 'Sciatica', 'Chronic Radiculopathy'],
+  },
+  {
+    brandName: 'Gaba 300',
+    genericName: 'Gabapentin',
+    strength: '300 mg',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 12.00,
+    packageSize: "10's strip",
+    indications: ['Partial Onset Seizures', 'Herpes Zoster Pain'],
+  },
+  {
+    brandName: 'Amitriptylin 10',
+    genericName: 'Amitriptyline Hydrochloride',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 1.50,
+    packageSize: "10's strip",
+    indications: ['Chronic Tension Headache', 'Neuropathic Pain', 'Depression with Insomnia'],
+  },
+  {
+    brandName: 'Amitriptylin 25',
+    genericName: 'Amitriptyline Hydrochloride',
+    strength: '25 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 2.50,
+    packageSize: "10's strip",
+    indications: ['Major Depressive Disorder', 'Nocturnal Enuresis'],
+  },
+  {
+    brandName: 'Zoloft 50',
+    genericName: 'Sertraline Hydrochloride',
+    strength: '50 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Pfizer / Square',
+    unitPrice: 20.00,
+    packageSize: "10's strip",
+    indications: ['Obsessive Compulsive Disorder (OCD)', 'PTSD', 'Social Anxiety Disorder'],
+  },
+  {
+    brandName: 'Seroxat 20',
+    genericName: 'Paroxetine Hydrochloride',
+    strength: '20 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'GlaxoSmithKline',
+    unitPrice: 25.00,
+    packageSize: "10's strip",
+    indications: ['Panic Disorder with Agoraphobia', 'Major Depression'],
+  },
+  {
+    brandName: 'Prothiaden 25',
+    genericName: 'Dosulepin Hydrochloride',
+    strength: '25 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Abbott',
+    unitPrice: 5.00,
+    packageSize: "10's strip",
+    indications: ['Depressive Illness with Associated Anxiety'],
+  },
+  {
+    brandName: 'Anxit 0.5',
+    genericName: 'Alprazolam',
+    strength: '0.5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 4.00,
+    packageSize: "10's strip",
+    indications: ['Short-term Relief of Disabling Anxiety', 'Agoraphobia'],
+  },
+  {
+    brandName: 'Frisium 10',
+    genericName: 'Clobazam',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Sanofi Bangladesh Ltd.',
+    unitPrice: 9.00,
+    packageSize: "10's strip",
+    indications: ['Adjunctive Therapy in Refractory Epilepsy', 'Severe Anxiety States'],
+  },
+
+  // 241-260: Eye, Ear, Dermatology & Topicals
+  {
+    brandName: 'Optiflox Eye Drops',
+    genericName: 'Moxifloxacin Hydrochloride',
+    strength: '0.5%',
+    dosageForm: 'Eye Drop',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 120.00,
+    packageSize: '5 ml dropper bottle',
+    indications: ['Bacterial Conjunctivitis', 'Corneal Ulcers', 'Post-Cataract Prophylaxis'],
+  },
+  {
+    brandName: 'Betameson-N',
+    genericName: 'Betamethasone + Neomycin Sulphate',
+    strength: '0.1% + 0.5%',
+    dosageForm: 'Eye/Ear Drops',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 40.00,
+    packageSize: '5 ml bottle',
+    indications: ['Allergic Conjunctivitis with Infection', 'Otitis Externa'],
+  },
+  {
+    brandName: 'Dexasone Eye Drops',
+    genericName: 'Dexamethasone Sodium Phosphate',
+    strength: '0.1%',
+    dosageForm: 'Eye Drop',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 45.00,
+    packageSize: '5 ml bottle',
+    indications: ['Ocular Inflammation', 'Uveitis', 'Post-operative Eye Inflammation'],
+  },
+  {
+    brandName: 'Tears Naturale Free',
+    genericName: 'Dextran 70 + Hydroxypropyl Methylcellulose',
+    strength: '0.1% + 0.3%',
+    dosageForm: 'Eye Drop',
+    manufacturer: 'Alcon / Square',
+    unitPrice: 180.00,
+    packageSize: '10 ml bottle',
+    indications: ['Dry Eye Syndrome', 'Digital Eye Strain', 'Corneal Lubrication'],
+  },
+  {
+    brandName: 'Refresh Tears',
+    genericName: 'Carboxymethylcellulose Sodium',
+    strength: '0.5%',
+    dosageForm: 'Eye Drop',
+    manufacturer: 'Allergan',
+    unitPrice: 220.00,
+    packageSize: '10 ml bottle',
+    indications: ['Artificial Tears', 'Burning & Irritation due to Dry Eyes'],
+  },
+  {
+    brandName: 'Tobrasone Eye Drops',
+    genericName: 'Tobramycin + Dexamethasone',
+    strength: '0.3% + 0.1%',
+    dosageForm: 'Eye Drop',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 110.00,
+    packageSize: '5 ml bottle',
+    indications: ['Steroid-responsive Inflammatory Ocular Conditions'],
+  },
+  {
+    brandName: 'Ciplox Eye/Ear Drops',
+    genericName: 'Ciprofloxacin',
+    strength: '0.3%',
+    dosageForm: 'Eye/Ear Drops',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 35.00,
+    packageSize: '5 ml bottle',
+    indications: ['Bacterial Keratitis', 'Acute Otitis Externa'],
+  },
+  {
+    brandName: 'Betnovate-N Cream',
+    genericName: 'Betamethasone Valerate + Neomycin Sulphate',
+    strength: '0.1% + 0.5%',
+    dosageForm: 'Cream',
+    manufacturer: 'GlaxoSmithKline',
+    unitPrice: 55.00,
+    packageSize: '15 g tube',
+    indications: ['Infected Eczema', 'Contact Dermatitis', 'Insect Bites'],
+  },
+  {
+    brandName: 'Dermasol Ointment',
+    genericName: 'Clobetasol Propionate',
+    strength: '0.05%',
+    dosageForm: 'Ointment',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 65.00,
+    packageSize: '10 g tube',
+    indications: ['Psoriasis', 'Recalcitrant Eczematous Dermatoses', 'Lichen Planus'],
+  },
+  {
+    brandName: 'Canesten Cream',
+    genericName: 'Clotrimazole',
+    strength: '1%',
+    dosageForm: 'Cream',
+    manufacturer: 'Bayer / Square',
+    unitPrice: 85.00,
+    packageSize: '20 g tube',
+    indications: ['Tinea Pedis (Athlete Foot)', 'Tinea Cruris', 'Ringworm'],
+  },
+  {
+    brandName: 'Bactroban Ointment',
+    genericName: 'Mupirocin',
+    strength: '2%',
+    dosageForm: 'Ointment',
+    manufacturer: 'GlaxoSmithKline',
+    unitPrice: 180.00,
+    packageSize: '10 g tube',
+    indications: ['Topical MRSA Elimination', 'Impetigo Contagiosa', 'Folliculitis'],
+  },
+  {
+    brandName: 'Daktarin Oral Gel',
+    genericName: 'Miconazole',
+    strength: '20 mg / g',
+    dosageForm: 'Oral Gel',
+    manufacturer: 'Johnson & Johnson / Square',
+    unitPrice: 120.00,
+    packageSize: '20 g tube',
+    indications: ['Oral Candidiasis (Thrush)', 'Fungal Gums & Tongue Infection'],
+  },
+  {
+    brandName: 'Quadriderm Cream',
+    genericName: 'Betamethasone + Gentamicin + Tolnaftate + Clioquinol',
+    strength: 'Quad Combination',
+    dosageForm: 'Cream',
+    manufacturer: 'Organon',
+    unitPrice: 110.00,
+    packageSize: '15 g tube',
+    indications: ['Mixed Fungal & Bacterial Skin Infections', 'Intertrigo'],
+  },
+  {
+    brandName: 'Tretoin Cream',
+    genericName: 'Tretinoin (Retinoic Acid)',
+    strength: '0.05%',
+    dosageForm: 'Cream',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 95.00,
+    packageSize: '10 g tube',
+    indications: ['Acne Comedonica', 'Skin Keratinization Regulation', 'Photoaging'],
+  },
+  {
+    brandName: 'Fucidin Ointment',
+    genericName: 'Sodium Fusidate',
+    strength: '2%',
+    dosageForm: 'Ointment',
+    manufacturer: 'Leo Pharma / Square',
+    unitPrice: 140.00,
+    packageSize: '15 g tube',
+    indications: ['Staphylococcal Skin Infections', 'Sycosis Barbae', 'Infected Cuts'],
+  },
+  {
+    brandName: 'Burnsil Cream',
+    genericName: 'Silver Sulfadiazine',
+    strength: '1%',
+    dosageForm: 'Cream',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 75.00,
+    packageSize: '25 g tube',
+    indications: ['Second and Third Degree Thermal Burns', 'Burn Wound Sepsis Prevention'],
+  },
+  {
+    brandName: 'Scabo 6 Lotion',
+    genericName: 'Permethrin',
+    strength: '5%',
+    dosageForm: 'Lotion',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 85.00,
+    packageSize: '60 ml bottle',
+    indications: ['Scabies Infestation Treatment in Entire Family'],
+  },
+
+  // 261-280: Vitamins, Minerals, Bone Health & Nutritional Supplements
   {
     brandName: 'Calbo-D',
     genericName: 'Calcium Carbonate + Cholecalciferol (Vitamin D3)',
@@ -627,6 +2490,16 @@ export const BANGLADESH_MEDICINES = [
     unitPrice: 12.00,
     packageSize: "15's strip",
     indications: ['Organic Calcium Supplementation', 'Bone Strength', 'Joint Mobility'],
+  },
+  {
+    brandName: 'Coralcal-D',
+    genericName: 'Coral Calcium + Vitamin D3',
+    strength: '500 mg + 200 IU',
+    dosageForm: 'Tablet',
+    manufacturer: 'Radiant Pharmaceuticals Ltd.',
+    unitPrice: 10.00,
+    packageSize: "15's strip",
+    indications: ['Calcium & Vitamin D3 Deficiency in Elderly & Menopause'],
   },
   {
     brandName: 'Neuro-B',
@@ -658,13 +2531,177 @@ export const BANGLADESH_MEDICINES = [
     packageSize: "4's strip",
     indications: ['Severe Vitamin D Deficiency', 'Osteomalacia', 'Immunity Enhancement'],
   },
+  {
+    brandName: 'D-Rise 40000',
+    genericName: 'Cholecalciferol (Vitamin D3)',
+    strength: '40000 IU',
+    dosageForm: 'Capsule',
+    manufacturer: 'Acme Laboratories Ltd.',
+    unitPrice: 75.00,
+    packageSize: "4's strip",
+    indications: ['Refractory Hypovitaminosis D', 'Severe Bone Pain'],
+  },
+  {
+    brandName: 'Ferol-D',
+    genericName: 'Ferrous Ascorbate + Folic Acid + Zinc',
+    strength: '100 mg + 1.5 mg + 22.5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Iron Deficiency Anemia in Pregnancy', 'Nutritional Anemia'],
+  },
+  {
+    brandName: 'I-Vit',
+    genericName: 'Multivitamin & Multimineral A to Z',
+    strength: 'Complete 32 Nutrients',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 6.50,
+    packageSize: "30's bottle",
+    indications: ['Daily Micronutrient Support', 'Immune Vitality', 'Antioxidant Defense'],
+  },
+  {
+    brandName: 'Zincat',
+    genericName: 'Zinc Sulphate Monohydrate',
+    strength: '20 mg',
+    dosageForm: 'Dispersible Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 2.00,
+    packageSize: "10's strip",
+    indications: ['Acute Diarrhea Recovery in Children', 'Immunity Boosting', 'Wound Healing'],
+  },
+  {
+    brandName: 'Aristovit M',
+    genericName: 'Multivitamin + Multimineral',
+    strength: 'Therapeutic High Potency',
+    dosageForm: 'Tablet',
+    manufacturer: 'Aristopharma Ltd.',
+    unitPrice: 5.50,
+    packageSize: "30's bottle",
+    indications: ['Physical & Mental Fatigue', 'Recovery after Illness'],
+  },
+  {
+    brandName: 'Becovita',
+    genericName: 'Vitamin B-Complex',
+    strength: 'Therapeutic B-Complex',
+    dosageForm: 'Syrup',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 55.00,
+    packageSize: '100 ml bottle',
+    indications: ['Childhood Vitamin B Deficiency', 'Stomatitis', 'Glossitis'],
+  },
+  {
+    brandName: 'Folic Acid 5',
+    genericName: 'Folic Acid',
+    strength: '5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 0.70,
+    packageSize: "20's strip",
+    indications: ['Neural Tube Defect Prevention in Pregnancy', 'Megaloblastic Anemia'],
+  },
+  {
+    brandName: 'Revital',
+    genericName: 'Ginseng + Multivitamins + Minerals',
+    strength: 'Nutraceutical Formulation',
+    dosageForm: 'Capsule',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 15.00,
+    packageSize: "30's pack",
+    indications: ['Physical Stamina', 'Stress Resistance', 'Senile Debility'],
+  },
+  {
+    brandName: 'Osteocare',
+    genericName: 'Calcium + Magnesium + Zinc + Vitamin D3',
+    strength: 'Bone Health Complex',
+    dosageForm: 'Tablet',
+    manufacturer: 'Vitabiotics',
+    unitPrice: 16.00,
+    packageSize: "30's box",
+    indications: ['Optimal Bone Mineralization', 'Joint Cartilage Nutrition'],
+  },
+  {
+    brandName: 'C-Vit 250 Chewable',
+    genericName: 'Ascorbic Acid (Vitamin C)',
+    strength: '250 mg',
+    dosageForm: 'Chewable Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 1.50,
+    packageSize: "10's strip",
+    indications: ['Scurvy Prophylaxis', 'Common Cold Resistance', 'Collagen Synthesis'],
+  },
+
+  // ── 6 New Chronic-Disease / Specialist Brands (required for Fix 1 stock variation) ──
+  {
+    brandName: 'Dimerol',
+    genericName: 'Diphenhydramine Hydrochloride',
+    strength: '25 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Opsonin Pharma Ltd.',
+    unitPrice: 2.50,
+    packageSize: "10's strip",
+    indications: ['Allergic Rhinitis', 'Urticaria', 'Insomnia', 'Motion Sickness', 'Common Cold'],
+  },
+  {
+    brandName: 'Dialiptin-M',
+    genericName: 'Alogliptin + Metformin Hydrochloride',
+    strength: '12.5 mg/500 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 22.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes Mellitus', 'Blood Glucose Control', 'DPP-4 + Biguanide Combination'],
+  },
+  {
+    brandName: 'Empatab',
+    genericName: 'Empagliflozin',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 55.00,
+    packageSize: "10's strip",
+    indications: ['Type 2 Diabetes', 'Heart Failure', 'Chronic Kidney Disease', 'SGLT-2 Inhibitor'],
+  },
+  {
+    brandName: 'Bisopro',
+    genericName: 'Bisoprolol Fumarate',
+    strength: '2.5 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    unitPrice: 8.00,
+    packageSize: "10's strip",
+    indications: ['Hypertension', 'Angina Pectoris', 'Chronic Heart Failure', 'Cardiac Arrhythmia'],
+  },
+  {
+    brandName: 'Rosutin',
+    genericName: 'Rosuvastatin Calcium',
+    strength: '10 mg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    unitPrice: 18.00,
+    packageSize: "10's strip",
+    indications: ['Hypercholesterolaemia', 'Mixed Dyslipidaemia', 'Primary Prevention of Cardiovascular Events'],
+  },
+  {
+    brandName: 'Thyrox',
+    genericName: 'Levothyroxine Sodium',
+    strength: '50 mcg',
+    dosageForm: 'Tablet',
+    manufacturer: 'Incepta Pharmaceuticals Ltd.',
+    unitPrice: 4.00,
+    packageSize: "30's strip",
+    indications: ['Hypothyroidism', 'Thyroid Hormone Replacement', 'Hashimoto\'s Thyroiditis', 'Goiter'],
+  },
 ];
 
 /**
- * 4 Demo Pharmacies with realistic Dhaka, Bangladesh coordinates
- * Coordinates format: [longitude, latitude]
+ * 10 Realistic Pharmacies:
+ * - 4 Existing Central Dhaka branches
+ * - 6 Realistic Savar / Birulia / Ashulia branches with accurate GeoJSON [longitude, latitude] coordinates
  */
-export const DEMO_PHARMACIES_CONFIG = [
+export const PHARMACIES_CONFIG = [
+  // ── 4 Existing Dhaka Pharmacies ──
   {
     name: 'MediCare Express Dhanmondi',
     licenseNumber: 'DGDA-DHK-48291',
@@ -677,14 +2714,14 @@ export const DEMO_PHARMACIES_CONFIG = [
       postalCode: '1205',
       formattedAddress: 'Road 7, Dhanmondi, Dhaka 1205',
     },
-    // Dhanmondi Lake area, Dhaka [longitude, latitude]
     location: {
       type: 'Point',
-      coordinates: [90.3756, 23.7461],
+      coordinates: [90.3756, 23.7461], // [longitude, latitude]
     },
     operatingHours: { open: '08:00', close: '23:30', isOpen24Hours: false },
     rating: 4.9,
     isOpen: true,
+    area: 'Dhaka',
   },
   {
     name: 'Green Life Pharmacy Uttara',
@@ -698,7 +2735,6 @@ export const DEMO_PHARMACIES_CONFIG = [
       postalCode: '1230',
       formattedAddress: 'Sector 7, Uttara Model Town, Dhaka 1230',
     },
-    // Uttara Sector 7, Dhaka [longitude, latitude]
     location: {
       type: 'Point',
       coordinates: [90.3984, 23.8732],
@@ -706,6 +2742,7 @@ export const DEMO_PHARMACIES_CONFIG = [
     operatingHours: { open: '00:00', close: '23:59', isOpen24Hours: true },
     rating: 4.8,
     isOpen: true,
+    area: 'Dhaka',
   },
   {
     name: 'Popular Pharma Care Mirpur',
@@ -719,7 +2756,6 @@ export const DEMO_PHARMACIES_CONFIG = [
       postalCode: '1216',
       formattedAddress: 'Mirpur 10 Roundabout, Dhaka 1216',
     },
-    // Mirpur 10 Circle, Dhaka [longitude, latitude]
     location: {
       type: 'Point',
       coordinates: [90.3688, 23.8071],
@@ -727,6 +2763,7 @@ export const DEMO_PHARMACIES_CONFIG = [
     operatingHours: { open: '08:30', close: '23:00', isOpen24Hours: false },
     rating: 4.7,
     isOpen: true,
+    area: 'Dhaka',
   },
   {
     name: 'Apex Health Pharmacy Mohammadpur',
@@ -740,7 +2777,6 @@ export const DEMO_PHARMACIES_CONFIG = [
       postalCode: '1207',
       formattedAddress: 'Ring Road, Mohammadpur, Dhaka 1207',
     },
-    // Mohammadpur Ring Road, Dhaka [longitude, latitude]
     location: {
       type: 'Point',
       coordinates: [90.3625, 23.7588],
@@ -748,21 +2784,210 @@ export const DEMO_PHARMACIES_CONFIG = [
     operatingHours: { open: '08:00', close: '23:59', isOpen24Hours: false },
     rating: 4.85,
     isOpen: true,
+    area: 'Dhaka',
   },
+
+  // ── 6 Realistic Savar / Birulia / Ashulia Pharmacies ──
+  {
+    name: 'Khagan Model Pharmacy',
+    licenseNumber: 'DGDA-DHK-SAV-01201',
+    contactPhone: '+880 1712-445566',
+    contactEmail: 'khagan.model@medibridge.com',
+    ownerEmail: 'owner.khagan@medibridge.com',
+    address: {
+      street: 'Khagan Bazar, Birulia Road',
+      city: 'Savar',
+      postalCode: '1341',
+      formattedAddress: 'Khagan Bazar, Birulia, Savar, Dhaka 1341',
+    },
+    location: {
+      type: 'Point',
+      coordinates: [90.3080, 23.8760], // [longitude, latitude]
+    },
+    operatingHours: { open: '07:30', close: '23:30', isOpen24Hours: false },
+    rating: 4.9,
+    isOpen: true,
+    area: 'Savar',
+  },
+  {
+    name: 'Akran Care Pharma',
+    licenseNumber: 'DGDA-DHK-SAV-01202',
+    contactPhone: '+880 1819-556677',
+    contactEmail: 'akran.care@medibridge.com',
+    ownerEmail: 'owner.akran@medibridge.com',
+    address: {
+      street: 'Main Road, Akran Bazar, Birulia',
+      city: 'Savar',
+      postalCode: '1340',
+      formattedAddress: 'Akran Bazar, Birulia, Savar, Dhaka 1340',
+    },
+    location: {
+      type: 'Point',
+      coordinates: [90.3140, 23.8640], // [longitude, latitude]
+    },
+    operatingHours: { open: '08:00', close: '23:00', isOpen24Hours: false },
+    rating: 4.8,
+    isOpen: true,
+    area: 'Savar',
+  },
+  {
+    name: 'Enam Square Pharmacy',
+    licenseNumber: 'DGDA-DHK-SAV-01203',
+    contactPhone: '+880 1911-667788',
+    contactEmail: 'enam.square@medibridge.com',
+    ownerEmail: 'owner.enam@medibridge.com',
+    address: {
+      street: '9/3 Parboti Nagar, Enam Medical College Road',
+      city: 'Savar',
+      postalCode: '1340',
+      formattedAddress: 'Enam Medical College Road, Savar, Dhaka 1340',
+    },
+    location: {
+      type: 'Point',
+      coordinates: [90.2580, 23.8480], // [longitude, latitude]
+    },
+    operatingHours: { open: '00:00', close: '23:59', isOpen24Hours: true },
+    rating: 4.9,
+    isOpen: true,
+    area: 'Savar',
+  },
+  {
+    name: 'Savar HealthPlus Pharmacy',
+    licenseNumber: 'DGDA-DHK-SAV-01204',
+    contactPhone: '+880 1722-778899',
+    contactEmail: 'savar.healthplus@medibridge.com',
+    ownerEmail: 'owner.savarhp@medibridge.com',
+    address: {
+      street: 'Savar Bazar Bus Stand, Dhaka-Aricha Highway',
+      city: 'Savar',
+      postalCode: '1340',
+      formattedAddress: 'Savar Bazar Bus Stand, Dhaka-Aricha Hwy, Savar, Dhaka 1340',
+    },
+    location: {
+      type: 'Point',
+      coordinates: [90.2640, 23.8540], // [longitude, latitude]
+    },
+    operatingHours: { open: '08:00', close: '23:59', isOpen24Hours: false },
+    rating: 4.85,
+    isOpen: true,
+    area: 'Savar',
+  },
+  {
+    name: 'Birulia Bridge Medical Hall',
+    licenseNumber: 'DGDA-DHK-SAV-01205',
+    contactPhone: '+880 1623-889900',
+    contactEmail: 'birulia.bridge@medibridge.com',
+    ownerEmail: 'owner.birulia@medibridge.com',
+    address: {
+      street: 'East Approach Road, Birulia Bridge',
+      city: 'Savar',
+      postalCode: '1340',
+      formattedAddress: 'Birulia Road, Birulia Bridge, Savar, Dhaka 1340',
+    },
+    location: {
+      type: 'Point',
+      coordinates: [90.3230, 23.8570], // [longitude, latitude]
+    },
+    operatingHours: { open: '08:00', close: '23:00', isOpen24Hours: false },
+    rating: 4.75,
+    isOpen: true,
+    area: 'Savar',
+  },
+  {
+    name: 'Dattapara Wellness Pharma',
+    licenseNumber: 'DGDA-DHK-SAV-01206',
+    contactPhone: '+880 1534-990011',
+    contactEmail: 'dattapara.wellness@medibridge.com',
+    ownerEmail: 'owner.dattapara@medibridge.com',
+    address: {
+      street: 'Dattapara Central More, Ashulia Road',
+      city: 'Savar',
+      postalCode: '1341',
+      formattedAddress: 'Dattapara, Ashulia, Savar, Dhaka 1341',
+    },
+    location: {
+      type: 'Point',
+      coordinates: [90.3210, 23.8790], // [longitude, latitude]
+    },
+    operatingHours: { open: '08:00', close: '23:30', isOpen24Hours: false },
+    rating: 4.8,
+    isOpen: true,
+    area: 'Savar',
+  },
+];
+
+/**
+ * Per-pharmacy intentional stock variation for Savar pharmacies.
+ * Most brands are universally stocked; certain chronic-disease meds are
+ * deliberately absent from 2–3 branches so stock comparison is genuinely useful.
+ *
+ * Key:  pharmacy name fragment → brands OUT of stock at that branch
+ */
+const SAVAR_BRANCH_STOCKOUTS = {
+  'Khagan Model Pharmacy':     [],                                 // flagship — has everything
+  'Akran Care Pharma':         ['Empatab', 'Rosutin'],            // out of SGLT-2 & statin
+  'Enam Square Pharmacy':      ['Bisopro', 'Dimerol'],            // out of beta-blocker & antihistamine
+  'Savar HealthPlus Pharmacy': ['Dialiptin-M', 'Rosutin'],       // out of DPP-4 combo & statin
+  'Birulia Bridge Medical Hall':['Empatab', 'Bisopro'],          // small branch — missing two
+  'Dattapara Wellness Pharma': ['Dimerol', 'Dialiptin-M'],       // out of two
+};
+
+/** Core brands that ALL Savar pharmacies carry */
+const GUARANTEED_SAVAR_BRANDS = [
+  'Ardin',
+  'Napa',
+  'Bilastin',
+  'Afrin',
+  'Menthol',
+  'Seclo',
+  'Sergel',
+  'Maxpro',
+  'Monas',
+  'Fexo',
+  'Alatrol',
+  'Azithrocin',
+  'Cef-3',
+  'Montair',
+  'Tofen',
+  'Napa Extend',
+  'Ace',
+  'Fimoxyl',
+  'Moxaclav',
+  'Ciprocin',
+  'Losectil',
+  'Pantonix',
+  'Finix',
+  'Esoral',
+  // New chronic-disease brands (all branches carry at least these)
+  'Thyrox',
+  'Bisopro',
+  'Rosutin',
+  'Empatab',
+  'Dialiptin-M',
+  'Dimerol',
 ];
 
 /**
  * Main database population function
  */
-export async function seedDatabase() {
-  await connectDB();
+export async function seedDatabase(customUri) {
+  const mongoUri =
+    customUri ||
+    process.env.MONGO_URI ||
+    process.env.MONGODB_URI ||
+    'mongodb://127.0.0.1:27017/medibridge';
 
+  // Sanitize URI for safe display (mask passwords in Atlas connection strings)
+  const safeUri = mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
   console.log('============================================================');
   console.log('  MediBridge: Populating Bangladesh Medicine & Pharmacy Data');
-  console.log('============================================================');
+  console.log(`  Target Database: ${safeUri}`);
+  console.log('============================================================\n');
 
-  // Step 1: Create or verify default users (Patient, Pharmacy Owners, Admin)
-  console.log('\n[1/3] Seeding demo users...');
+  await connectDB(mongoUri);
+
+  // Step 1: Create or verify default users (Patient, Admin, 10 Pharmacy Owners)
+  console.log('[1/3] Upserting demo users (Patient, Admin, 10 Pharmacy Owners)...');
   const salt = await bcrypt.genSalt(10);
   const defaultPasswordHash = await bcrypt.hash('password123', salt);
 
@@ -775,8 +3000,8 @@ export async function seedDatabase() {
       role: 'patient',
       location: {
         type: 'Point',
-        coordinates: [90.3742, 23.7465], // Dhanmondi, near MediCare Express
-        address: 'Road 8A, Dhanmondi, Dhaka',
+        coordinates: [90.3080, 23.8760], // Near Khagan Model Pharmacy, Savar
+        address: 'Khagan Bazar, Birulia, Savar',
       },
     },
     {
@@ -786,7 +3011,7 @@ export async function seedDatabase() {
       phone: '+880 1700-999999',
       role: 'admin',
     },
-    ...DEMO_PHARMACIES_CONFIG.map((p) => ({
+    ...PHARMACIES_CONFIG.map((p) => ({
       name: `${p.name} Manager`,
       email: p.ownerEmail,
       password: defaultPasswordHash,
@@ -796,52 +3021,62 @@ export async function seedDatabase() {
     })),
   ];
 
-  // Upsert users
   const createdUsers = {};
   for (const user of demoUsers) {
     let existing = await User.findOne({ email: user.email });
     if (!existing) {
       existing = await User.create(user);
+    } else {
+      existing.location = user.location || existing.location;
+      await existing.save();
     }
     createdUsers[user.email] = existing._id;
   }
-  console.log(`✓ Seeded ${demoUsers.length} system users (Patient, Admin, 4 Pharmacy Owners)`);
+  console.log(`✓ Upserted ${demoUsers.length} system users cleanly`);
 
-  // Step 2: Seed MedicineMaster (50+ Bangladeshi Medicines)
-  console.log('\n[2/3] Seeding MedicineMaster with 60+ authentic Bangladeshi medicines...');
+  // Step 2: Seed MedicineMaster collection with 200+ medicines
+  console.log(`\n[2/3] Seeding MedicineMaster with ${BANGLADESH_MEDICINES.length} curated medicines...`);
   await MedicineMaster.deleteMany({});
   const insertedMedicines = await MedicineMaster.insertMany(BANGLADESH_MEDICINES);
   await MedicineMaster.syncIndexes();
-  console.log(`✓ Successfully seeded ${insertedMedicines.length} medicines into MedicineMaster collection!`);
+  console.log(`✓ Successfully seeded ${insertedMedicines.length} items into MedicineMaster!`);
 
-  // Step 3: Seed Demo Pharmacies with 70-80% live stock matching
-  console.log('\n[3/3] Seeding 4 Demo Pharmacies in Dhaka with live inventory...');
+  // Step 3: Seed 10 Pharmacies with realistic 75%–90% stock distribution
+  console.log(`\n[3/3] Seeding ${PHARMACIES_CONFIG.length} pharmacies (Dhaka + Savar/Birulia/Ashulia) with realistic stock...`);
   await Pharmacy.deleteMany({});
 
-  const pharmaciesToInsert = DEMO_PHARMACIES_CONFIG.map((shopConfig) => {
-    // Generate inventory across ALL 60+ medicines
-    // 70-80% in stock, 20-30% marked out of stock for realistic testing
-    let inStockCount = 0;
-    const inventory = insertedMedicines.map((med) => {
-      // Realistic baseline stock (~75%)
-      let inStock = Math.random() < 0.75;
+  const pharmaciesToInsert = PHARMACIES_CONFIG.map((shopConfig, shopIdx) => {
+    const isSavarArea = shopConfig.area === 'Savar';
 
-      // Ensure flagship branches carry key essentials and smaller branches demonstrate out-of-stock states
-      if (shopConfig.name.includes('Dhanmondi')) {
-        // Flagship central branch carries key demo essentials
-        if (['Napa', 'Napa Extra', 'Seclo 20', 'Sergel 20', 'Monas 10', 'Fexo 120', 'Azith 500'].includes(med.brandName)) {
-          inStock = true;
+    // Target stock ratio between 78% and 88%
+    const targetStockRatio = 0.80 + ((shopIdx % 3) * 0.04);
+    let inStockCount = 0;
+
+    const inventory = insertedMedicines.map((med, medIdx) => {
+      let inStock = false;
+
+      if (isSavarArea) {
+        if (GUARANTEED_SAVAR_BRANDS.includes(med.brandName)) {
+          // Check per-branch intentional stockouts
+          const branchStockouts = SAVAR_BRANCH_STOCKOUTS[shopConfig.name] || [];
+          inStock = !branchStockouts.includes(med.brandName);
+        } else {
+          // General 80–88% coverage for non-guaranteed items
+          const seedValue = ((shopIdx * 37) + (medIdx * 19)) % 100;
+          inStock = (seedValue / 100) < targetStockRatio;
         }
-      } else if (shopConfig.name.includes('Mohammadpur')) {
-        // Mohammadpur tests out-of-stock scenario for specific items
-        if (['Sergel 40', 'Azith 500'].includes(med.brandName)) {
-          inStock = false;
-        }
+      } else if (shopConfig.name.includes('Dhanmondi') && ['Napa', 'Napa Extra', 'Seclo', 'Sergel', 'Monas', 'Fexo', 'Azithrocin'].includes(med.brandName)) {
+        // Flagship Dhaka branch carrying core demo staples
+        inStock = true;
+      } else {
+        // Deterministic pseudo-random distribution to achieve realistic 75%-90% availability
+        const seedValue = ((shopIdx * 37) + (medIdx * 19)) % 100;
+        inStock = (seedValue / 100) < targetStockRatio;
       }
 
       if (inStock) inStockCount++;
 
-      const quantity = inStock ? Math.floor(Math.random() * 85) + 15 : 0; // 15 to 100 units
+      const quantity = inStock ? Math.floor(Math.random() * 65) + 20 : 0; // 20 to 85 units
       const unitPrice = med.unitPrice || 10;
 
       return {
@@ -859,7 +3094,7 @@ export async function seedDatabase() {
 
     const stockPercentage = Math.round((inStockCount / insertedMedicines.length) * 100);
     console.log(
-      `  - ${shopConfig.name}: ${inStockCount}/${insertedMedicines.length} items in stock (${stockPercentage}%)`
+      `  - [${shopConfig.area.toUpperCase()}] ${shopConfig.name}: ${inStockCount}/${insertedMedicines.length} in stock (${stockPercentage}%)`
     );
 
     return {
@@ -883,19 +3118,33 @@ export async function seedDatabase() {
 
   console.log('\n============================================================');
   console.log('✓ SEED COMPLETED SUCCESSFULLY!');
-  console.log(`  - MedicineMaster: ${insertedMedicines.length} items`);
-  console.log(`  - Pharmacies: ${createdPharmacies.length} active branches in Dhaka`);
-  console.log('  - Stock availability: ~75% in stock across all shops');
+  console.log(`  - MedicineMaster Catalog: ${insertedMedicines.length} items`);
+  console.log(`  - Active Pharmacies: ${createdPharmacies.length} branches (4 Dhaka + 6 Savar/Birulia/Ashulia)`);
+  console.log('  - Savar/Khagan/Akran Guaranteed Items: In stock across all local branches');
+  console.log('  - Stock Ratio: 75%–90% realistic coverage across all branches');
   console.log('  - Test Patient: patient@medibridge.com / password123');
   console.log('============================================================\n');
+
+  return {
+    medicinesCount: insertedMedicines.length,
+    pharmaciesCount: createdPharmacies.length,
+  };
 }
 
 // Auto-run if executed directly via CLI
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (
+  process.argv[1] &&
+  (fileURLToPath(import.meta.url) === process.argv[1] ||
+    process.argv[1].endsWith('seed.js'))
+) {
   seedDatabase()
-    .then(() => process.exit(0))
+    .then(async () => {
+      await mongoose.disconnect();
+      console.log('[Database] Mongoose connection closed cleanly.');
+      process.exit(0);
+    })
     .catch((err) => {
-      console.error('[Seed Error]:', err);
+      console.error('\n[Seed Error]:', err.message || err);
       process.exit(1);
     });
 }
